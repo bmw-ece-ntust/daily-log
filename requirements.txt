@@ -1,0 +1,6 @@
+PyYAML>=6.0.1
+
+# Google Calendar integration (optional — required only when google_calendar.enabled: true)
+google-api-python-client>=2.0
+google-auth-httplib2>=0.2
+google-auth-oauthlib>=1.0

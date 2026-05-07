@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Config (copy from env.example.yaml, do not commit personal config)
+env.yaml
+
+# Generated output
+reminder.md
+
+# macOS
+.DS_Store

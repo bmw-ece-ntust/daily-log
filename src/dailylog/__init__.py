@@ -1,0 +1,1 @@
+"""Daily-log automation utilities."""
