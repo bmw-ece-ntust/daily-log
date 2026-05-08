@@ -85,7 +85,35 @@ JSON_EOF
   echo "✓ ~/.claude/settings.json created"
 fi
 
-# ── 2. ~/CLAUDE.md ────────────────────────────────────────────────────────────
+# ── 2. VS Code mcp.json (Copilot MCP — user-level) ───────────────────────────
+VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
+MCP_JSON="$VSCODE_USER_DIR/mcp.json"
+if [ -d "$VSCODE_USER_DIR" ]; then
+  cat > "$MCP_JSON" <<MCP_EOF
+{
+  "servers": {
+    "mysql-memory": {
+      "command": "npx",
+      "args": ["-y", "@benborla29/mcp-server-mysql"],
+      "env": {
+        "MYSQL_HOST": "$MYSQL_HOST",
+        "MYSQL_PORT": "$MYSQL_PORT",
+        "MYSQL_USER": "$MYSQL_USER",
+        "MYSQL_PASS": "$MYSQL_PASS",
+        "MYSQL_DB": "$MYSQL_DB"
+      },
+      "type": "stdio"
+    }
+  },
+  "inputs": []
+}
+MCP_EOF
+  echo "✓ VS Code mcp.json written"
+else
+  echo "⚠ VS Code not found at $VSCODE_USER_DIR — skip mcp.json"
+fi
+
+# ── 3. ~/CLAUDE.md ────────────────────────────────────────────────────────────
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cp "$REPO_DIR/lab-automation/global-claude.md" "$HOME/CLAUDE.md"
 echo "✓ ~/CLAUDE.md written"
