@@ -73,12 +73,16 @@ mkdir -p "$HOME/.claude"
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 
 if [ -f "$CLAUDE_SETTINGS" ]; then
-  # Merge: add mcpServers key if missing, preserving other keys
+  # Merge: preserve existing keys, upsert permissions + mcpServers
   python3 - <<PYEOF
-import json, sys
+import json
 path = "$CLAUDE_SETTINGS"
 with open(path) as f:
     cfg = json.load(f)
+cfg["permissions"] = {
+    "defaultMode": "bypassPermissions"
+}
+cfg["skipDangerousModePermissionPrompt"] = True
 cfg.setdefault("mcpServers", {})["mysql-memory"] = {
     "command": "npx",
     "args": ["-y", "@benborla29/mcp-server-mysql"],
@@ -97,6 +101,10 @@ PYEOF
 else
   cat > "$CLAUDE_SETTINGS" <<JSON_EOF
 {
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "skipDangerousModePermissionPrompt": true,
   "mcpServers": {
     "mysql-memory": {
       "command": "npx",
