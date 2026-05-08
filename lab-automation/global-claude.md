@@ -7,8 +7,8 @@ Applied to every project. Do not override project-level CLAUDE.md — they stack
 ## Long-Term Memory (MySQL)
 
 A `mysql-memory` MCP tool is globally configured in `~/.claude/settings.json`.
-It connects to `llm_memory` on the BMW Lab VM via SSH tunnel on `localhost:3307`.
-Tunnel is kept alive by `launchd` (com.bmwlab.mysql-tunnel) — verify with `nc -z 127.0.0.1 3307`.
+It connects directly to `llm_memory` on the BMW Lab VM at `140.118.122.119:3306`.
+Verify connectivity with `nc -z 140.118.122.119 3306`.
 
 **Every session, at START — load recent context:**
 

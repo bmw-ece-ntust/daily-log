@@ -144,7 +144,7 @@ If the `## Auto Daily-log` section hash changes from `.sop-hash`, the workflow o
 
 ## Long-Term Memory (MySQL)
 
-The `mysql-memory` MCP server is configured globally in `~/.claude/settings.json` and connects to `llm_memory` on the BMW Lab VM via SSH tunnel on `localhost:3307`. The tunnel is managed by `launchd` (`com.bmwlab.mysql-tunnel`).
+The `mysql-memory` MCP server is configured globally in `~/.claude/settings.json` and connects directly to `llm_memory` on the BMW Lab VM at `140.118.122.119:3306`.
 
 **Session start** — load last 5 sessions:
 ```sql

@@ -2,7 +2,7 @@
 
 ## Long-Term Memory (MySQL)
 
-A `mysql-memory` MCP tool is available in VS Code. It connects to `llm_memory` on the BMW Lab VM via SSH tunnel (`localhost:3307`).
+A `mysql-memory` MCP tool is available in VS Code. It connects directly to `llm_memory` on the BMW Lab VM at `140.118.122.119:3306`.
 
 **At the START of every session**, run this to load recent context:
 
