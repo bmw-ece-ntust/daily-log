@@ -1,0 +1,93 @@
+name: SOP daily-log spec check
+
+# Runs every midnight Taiwan time (UTC+8 = 16:00 UTC) on weekdays.
+# Requires a repository secret: SOP_READ_TOKEN
+#   → fine-grained PAT with Contents: Read-only on bmw-ece-ntust/SOP
+on:
+  schedule:
+    - cron: '0 16 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  check-sop:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write   # needed to open an alert issue
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch SOP daily-log.md
+        env:
+          SOP_READ_TOKEN: ${{ secrets.SOP_READ_TOKEN }}
+        run: |
+          curl -sf \
+            -H "Authorization: Bearer $SOP_READ_TOKEN" \
+            -H "Accept: application/vnd.github.raw" \
+            "https://api.github.com/repos/bmw-ece-ntust/SOP/contents/daily-log.md" \
+            -o /tmp/sop-daily-log.md
+
+      - name: Extract and hash auto-daily-log section
+        id: hash
+        run: |
+          python3 - <<'PYEOF'
+          import hashlib, os, re, sys
+          text = open("/tmp/sop-daily-log.md").read()
+          m = re.search(r"(?s)(## Auto Daily-log\n.*?)(?=\n## |\Z)", text)
+          if not m:
+              print("ERROR: ## Auto Daily-log section not found in SOP daily-log.md", file=sys.stderr)
+              sys.exit(1)
+          digest = hashlib.sha256(m.group(1).encode()).hexdigest()[:16]
+          print(f"section_hash={digest}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"section_hash={digest}\n")
+          PYEOF
+
+      - name: Compare against stored hash
+        id: compare
+        run: |
+          stored=""
+          [ -f .sop-hash ] && stored=$(cat .sop-hash)
+          current="${{ steps.hash.outputs.section_hash }}"
+          echo "stored=$stored  current=$current"
+          if [ "$stored" != "$current" ]; then
+            echo "changed=true"  >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open issue on SOP change
+        if: steps.compare.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const hash = "${{ steps.hash.outputs.section_hash }}";
+            const title = "⚠️ SOP auto-daily-log section changed";
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "sop-sync",
+            });
+            if (issues.length > 0) {
+              console.log(`Issue already open: #${issues[0].number}`);
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body: [
+                "The `## Auto Daily-log` section in",
+                "[bmw-ece-ntust/SOP daily-log.md](https://github.com/bmw-ece-ntust/SOP/blob/master/daily-log.md#auto-daily-log)",
+                "has changed.",
+                "",
+                `New hash: \`${hash}\``,
+                "",
+                "**Action required:**",
+                "1. Review the diff in the SOP repo.",
+                "2. Update this tool's README / implementation to match.",
+                "3. Update `.sop-hash` with the new hash and commit to close this alert.",
+              ].join("\n"),
+              labels: ["sop-sync"],
+            });

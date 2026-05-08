@@ -1,0 +1,150 @@
+# CLAUDE.md — auto-daily-log
+
+Static knowledge snapshot for LLMs. Describes repo layout, conventions, and key behaviours.
+
+---
+
+## Purpose
+
+Automated daily-log tool for BMW Lab students at NTUST. Posts one GitHub issue comment per working day to a designated progress-plan issue, seeded from:
+- Git commit history across configured organisations / repos
+- Google Calendar events (optional)
+- Planning sources (issue body, local markdown files)
+
+Spec: [SOP daily-log.md § Auto Daily-log](https://github.com/bmw-ece-ntust/SOP/blob/master/daily-log.md#auto-daily-log)
+
+---
+
+## Repository Layout
+
+```
+auto-daily-log/
+├── main.py                        # Entrypoint: adds src/ to path, auto-loads env.yaml
+├── env.example.yaml               # Config template — copy to env.yaml (safe to commit)
+├── requirements.txt               # Runtime deps: PyYAML; optional Google Calendar libs
+├── .sop-hash                      # SHA-256[:16] of the SOP ## Auto Daily-log section
+├── .github/
+│   └── workflows/
+│       └── sop-check.yml          # Midnight weekday check against SOP (needs SOP_READ_TOKEN secret)
+└── src/dailylog/
+    ├── cli.py                     # Argument parser and main orchestration
+    ├── config.py                  # YAML → frozen dataclasses (AppConfig and sub-configs)
+    ├── github_api.py              # GitHub commit search + issue comment CRUD via gh CLI
+    ├── dailylog_md.py             # Markdown parse/patch: bullet regex, time-range update, commit linking
+    ├── gcal.py                    # Google Calendar OAuth2 integration
+    ├── planning.py                # Suggestion ranking from issue body or local markdown files
+    ├── overleaf.py                # Overleaf local-git integration (summarise by day)
+    ├── llm.py                     # Optional OpenAI-compatible LLM provider
+    ├── reminder.py                # Generate reminder.md (missing dates + no-evidence activities)
+    ├── restore.py                 # Restore daily-log comments from a JSON backup
+    ├── __init__.py
+    └── __main__.py                # python -m dailylog entrypoint
+```
+
+---
+
+## Config (`env.yaml`)
+
+Copy `env.example.yaml` → `env.yaml`. The file is safe to commit — no secrets.
+
+Key fields:
+
+| Field | Purpose |
+|---|---|
+| `github.login` | Your GitHub username (used to attribute commits) |
+| `github.contribution_sources.orgs` | Orgs to scan for your commits |
+| `github.contribution_sources.repo_owners` | Additional users whose repos to include |
+| `github.contribution_sources.repos` | Specific `owner/repo` entries |
+| `github.repo_owner / repo_name / issue_number` | Target issue for daily-log comments |
+| `github.seed_new_day_from_commits` | Auto-seed new day bullets from commits |
+| `github.append_unmatched_commits` | Append unreferenced commits as new bullets |
+| `timeline.lookback_days` | Default window for missing-date checks |
+| `timeline.start_date` | Historical start for full backfill |
+| `google_calendar.*` | Optional calendar integration |
+| `planning.*` | Optional task suggestion seeding |
+| `overleaf.*` | Optional Overleaf local-git summary |
+| `llm.*` | Optional OpenAI-compatible LLM analysis |
+
+---
+
+## Daily-Log Comment Format
+
+```markdown
+### YYYY/MM/DD
+
+**Short-term Goal**:
+<one-line goal>
+
+**Daily-logs**:
+- `HH.MM - HH.MM`: [description](https://github.com/org/repo/blob/abc1234/path/file.md#section)
+- `HH.MM - `: <ongoing activity>
+```
+
+Rules:
+- Date heading: `### YYYY/MM/DD` (Asia/Taipei timezone)
+- Time ticks use **dot notation**: `HH.MM` (not colons)
+- Evidence link must point to a **specific file blob URL** with 7-char commit hash + anchor
+- Special time-tick values: `` `SICK LEAVE` ``, `` `HOLIDAY` ``, `` `ABSENT` ``
+
+> **Note:** The SOP example uses `HH:MM` colon notation. This tool normalises to `HH.MM` dots.
+> The `.sop-hash` workflow will alert if the SOP section changes.
+
+---
+
+## Authentication
+
+| Service | Method |
+|---|---|
+| GitHub | `gh auth login` — no tokens in files |
+| Google Calendar | OAuth2 — `credentials.json` from Google Cloud Console, cached `token.json` |
+
+---
+
+## Key Behaviours
+
+### Markdown parsing (`dailylog_md.py`)
+
+- `parse_heading_date` — extracts `YYYY/MM/DD` from `### YYYY/MM/DD` heading (also handles blockquoted and fallback bubble-header form)
+- `patch_daily_logs` — matches bullet activities to commits by title similarity, fills end time and adds evidence link
+- `append_unmatched_commits` — adds commits not yet referenced anywhere in the comment
+- `patch_short_term_goal` — replaces content under `**Short-term Goal**:` with provided lines
+- `render_new_day_*` — templates for seeding a brand-new day comment
+
+### Commit search (`github_api.py`)
+
+- Uses `gh api search/commits` with `committer-date` range (±1 day buffer)
+- Bucketed by Asia/Taipei timezone
+- Deduplicates across multiple query sources
+- `enrich_commits_with_file_urls` — optional, resolves each commit to its primary `.md` file (one extra API call per commit)
+
+### CLI orchestration (`cli.py`)
+
+Order of operations per run:
+1. Fetch all existing daily-log comments for the date range
+2. Optionally fetch Google Calendar events
+3. Fetch commits from all configured sources
+4. `--ensure-comments` → create missing day comments (seeded from commits or plans)
+5. Patch existing comments: fill end times, add evidence links, append unmatched commits
+6. `--include-overleaf` → append Overleaf summary
+7. `--generate-reminder` → write reminder.md
+
+---
+
+## SOP Sync Workflow (`.github/workflows/sop-check.yml`)
+
+Runs every weekday at midnight Taiwan time (16:00 UTC). Requires a repository secret:
+
+| Secret | Value |
+|---|---|
+| `SOP_READ_TOKEN` | Fine-grained PAT with **Contents: Read-only** on `bmw-ece-ntust/SOP` |
+
+If the `## Auto Daily-log` section hash changes from `.sop-hash`, the workflow opens a GitHub issue labelled `sop-sync`. To acknowledge a change: review the SOP diff, update README/implementation, then update `.sop-hash` and commit.
+
+---
+
+## Conventions
+
+- Always run `--dry-run` first; switch to `--apply` only after confirming output
+- Skip weekends when backfilling — run Mon–Fri ranges only
+- Asia/Taipei (GMT+8) is the single authoritative timezone throughout
+- Evidence links must be file-specific with a 7-char commit hash anchor (not branch-head links)
