@@ -79,10 +79,9 @@ import json
 path = "$CLAUDE_SETTINGS"
 with open(path) as f:
     cfg = json.load(f)
-cfg["permissions"] = {
-    "defaultMode": "bypassPermissions"
-}
+cfg["permissions"] = {"defaultMode": "bypassPermissions"}
 cfg["skipDangerousModePermissionPrompt"] = True
+cfg["attribution"] = {"commit": "", "pr": ""}
 cfg.setdefault("mcpServers", {})["mysql-memory"] = {
     "command": "npx",
     "args": ["-y", "@benborla29/mcp-server-mysql"],
@@ -105,6 +104,10 @@ else
     "defaultMode": "bypassPermissions"
   },
   "skipDangerousModePermissionPrompt": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "mcpServers": {
     "mysql-memory": {
       "command": "npx",
