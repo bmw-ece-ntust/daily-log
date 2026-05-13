@@ -25,6 +25,8 @@ auto-daily-log/
 ├── reorder-comments.py            # Standalone: gap analysis + chronological reorder of issue comments
 ├── fill-from-calendar.py          # Standalone: fill missing entries from ICS/iCal feed or OAuth
 ├── requirements.txt               # Runtime deps: PyYAML; optional Google Calendar libs
+├── README.md                      # Usage guide and Quick Claude Prompts for common tasks
+├── CLAUDE.md                      # Static knowledge snapshot for LLMs (this file)
 ├── .sop-hash                      # SHA-256[:16] of the SOP ## Auto Daily-log section
 ├── .claude/
 │   └── settings.local.json        # Project-local Claude Code permissions (bypassPermissions)
