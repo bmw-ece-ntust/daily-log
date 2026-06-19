@@ -1,6 +1,6 @@
 ---
 name: daily-log-commit
-description: Run the BMW Lab daily-log COMMIT step when the user genuinely intends to commit/push (a short "git push" / "commit and push" instruction). Reconciles the 4 project files, commits in SOP Work Start format, pushes, and writes a long-term-memory session record. Do NOT trigger when "git push" merely appears inside a longer sentence that is about something else. Trigger: /daily-log-commit
+description: Run the BMW Lab daily-log COMMIT step when the user genuinely intends to commit/push (a short "git push" / "commit and push" instruction). Reconciles the 4 project files, commits in SOP work duration format, pushes, and writes a long-term-memory session record. Do NOT trigger when "git push" merely appears inside a longer sentence that is about something else. Trigger: /daily-log-commit
 ---
 
 # /daily-log-commit
@@ -33,7 +33,7 @@ old hook that fired on any literal match.
    ```
    <Short imperative summary title>
 
-   Work Start: <hh:mm>
+   work duration: <yyyy/mm/dd_hh:mm - yyyy/mm/dd_hh:mm>
 
    Summary:
    <one paragraph>

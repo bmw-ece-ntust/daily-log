@@ -12,9 +12,7 @@ Then:
 
 1. Run `git log -1 --format="%H %ai"` (= session START boundary) and `date "+%Y/%m/%d %H:%M"` (= session END).
    Read the VS Code session log at `{{VSCODE_TARGET_SESSION_LOG}}` to find the first user message timestamp that falls after the last commit — that is the true session start. If unavailable, ask: *"What time did you start working today?"*
-2. Format the working session(s):
-   - Single calendar day → `yyyy/mm/dd: hh.mm – hh.mm`
-   - Multiple calendar days → one line per day
+2. Format the work duration as `yyyy/mm/dd_hh:mm - yyyy/mm/dd_hh:mm` (session start datetime to end datetime; e.g. `2026/06/18_14:07 - 2026/06/19_16:25`).
 3. Write a one-paragraph summary of what was accomplished this session.
 4. Remove any LLMs from the co-author list.
 5. Stage all changes including CLAUDE.md, CONTEXT.md, MEMORY.md, and TODO.md, then commit and push using this format:
@@ -23,7 +21,7 @@ Then:
 
 <Short imperative summary title>
 
-Work Start: <hh:mm>
+work duration: <yyyy/mm/dd_hh:mm - yyyy/mm/dd_hh:mm>
 
 Summary:
 <One-paragraph summary of what changed and why>
