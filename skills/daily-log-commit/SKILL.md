@@ -5,7 +5,7 @@ description: Run the BMW Lab daily-log COMMIT step when the user genuinely inten
 
 # /daily-log-commit
 
-The commit half of the BMW Lab daily-log SOP. (The posting half is `auto-daily-log`.)
+The commit half of the BMW Lab daily-log SOP. (The posting half is `daily-log`.)
 
 ## When to run
 
@@ -43,9 +43,12 @@ old hook that fired on any literal match.
    2. <change 2>
    ```
 5. **Push** (`git push origin <branch>`).
-6. **Write a memory session record** (see the `memory` skill) so `auto-daily-log`
-   can later build the daily entry. Only if the repo's org is one of
-   `bmw-ece-ntust`, `bmw-ntust-internship`, `raycg` (others are not daily-log progress):
+6. **Write a memory session record** (see the `memory` skill) so `daily-log`
+   can later build the daily entry. Only if the repo is LTM-eligible per
+   `ltm_eligible` — its org is one of `bmw-ece-ntust`, `bmw-ntust-internship`,
+   `raycg`, OR its slug (owner/repo) is listed in `LAB_REPOS` in `lab.config`
+   (currently `ijosh-ch/claude`, the personal preference repo adopted as the
+   lab's preference foundation):
    ```
    type=session  name=<repo>-<yyyymmdd>-<7hex>
    description=<commit title>
@@ -54,8 +57,8 @@ old hook that fired on any literal match.
    ```
    Detect org + repo from `git remote get-url origin`, branch from
    `git branch --show-current`, and the GitHub username from `gh api user --jq .login`
-   (lab performance is attributed by GitHub account). If the org is outside the three,
-   skip the memory write.
+   (lab performance is attributed by GitHub account). If the repo is not
+   LTM-eligible (org not a lab org and slug not in `LAB_REPOS`), skip the memory write.
    This is the distilled "knowledge" layer; the SessionStart `record-session.sh` hook
    already logs the lightweight "activity" layer (repo/branch/day) automatically.
    The `memory` skill and `record-session.sh` are provided by the

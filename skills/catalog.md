@@ -9,7 +9,7 @@ references this repo, it no longer carries these skills.
 | Skill | Scope | Trigger | Brief |
 | --- | --- | --- | --- |
 | `daily-log-commit` | global | `/daily-log-commit` (auto on real `git push`) | Reconcile the 4 project files, commit in SOP `Work Start:` format, push, write an LTM session record. Lab orgs only. |
-| `auto-daily-log` | global | `/auto-daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
+| `daily-log` | global | `/daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
 | `verify-daily-log` | global | `/verify-daily-log` | Quickly verify the daily-log vs commits + LTM and fill only missing days. Token-efficient. |
 
 ## Layout
@@ -17,7 +17,7 @@ references this repo, it no longer carries these skills.
 ```
 main.py, src/, reorder-comments.py, fill-from-calendar.py   the Python tool
 scripts/   fetch-auto-daily-log.sh (UserPromptSubmit hook), auto-daily-log.md (SOP fallback)
-skills/    auto-daily-log, daily-log-commit, verify-daily-log
+skills/    daily-log, daily-log-commit, verify-daily-log
 install.sh wires skills + hook + DAILY_LOG_HOME + tool venv
 ```
 
