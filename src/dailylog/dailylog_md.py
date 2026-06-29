@@ -19,6 +19,7 @@ SECTION_HEADER_RE = re.compile(r"(?im)^\s*(?:>\s*)?\*\*[^*]+\*\*:\s*$")
 BULLET_RE = re.compile(
     r"^(?P<prefix>\s*(?:>\s*)?[-*]\s+)"  # bullet prefix (maybe blockquoted)
     r"(?P<time>`[^`]*`)"  # backticked time range
+    r"(?P<tag>(?:\s*\[[^\]]+\])?)"  # optional [owner/repo] project tag
     r"\s*:\s*"  # colon separator
     r"(?P<activity>.+?)\s*$"  # activity tail
 )
@@ -127,6 +128,7 @@ def patch_daily_logs(body: str, commits: list[Commit]) -> tuple[str, int]:
 
         prefix = m.group("prefix")
         time_tick = m.group("time")
+        tag = (m.group("tag") or "").strip()
         activity = m.group("activity").strip()
 
         best = None
@@ -150,7 +152,11 @@ def patch_daily_logs(body: str, commits: list[Commit]) -> tuple[str, int]:
 
         new_time = update_time_range(time_tick, best.end_hhmm)
         new_activity = link_activity(activity, best)
-        new_line = f"{prefix}{new_time}: {new_activity}"
+        # Preserve an existing project tag; otherwise tag with the commit's owner/repo.
+        if not tag and best.repo_full_name:
+            tag = f"[{best.repo_full_name}]"
+        tag_part = f" {tag}" if tag else ""
+        new_line = f"{prefix}{new_time}{tag_part}: {new_activity}"
 
         if new_line != line:
             lines[i] = new_line
@@ -196,7 +202,8 @@ def append_unmatched_commits(body: str, commits: list[Commit]) -> tuple[str, int
         if c.url in existing or c.sha in existing or c.short in existing:
             continue
         target = c.file_url or c.url
-        new_lines.append(f"{quote_prefix}- ` - {c.end_hhmm}`: [{c.title}]({target})")
+        tag = f" [{c.repo_full_name}]" if c.repo_full_name else ""
+        new_lines.append(f"{quote_prefix}- ` - {c.end_hhmm}`{tag}: [{c.title}]({target})")
 
     if not new_lines:
         return body, 0
@@ -232,7 +239,8 @@ def render_new_day_from_commits(d: date, commits: list[Commit]) -> str:
     else:
         for c in commits:
             target = c.file_url or c.url
-            lines.append(f"- ` - {c.end_hhmm}`: [{c.title}]({target})")
+            tag = f" [{c.repo_full_name}]" if c.repo_full_name else ""
+            lines.append(f"- ` - {c.end_hhmm}`{tag}: [{c.title}]({target})")
     lines.append("")
     return "\n".join(lines)
 

@@ -1,4 +1,4 @@
-# CLAUDE.md — auto-daily-log
+# CLAUDE.md — daily-log
 
 Static knowledge snapshot for LLMs. Describes repo layout, conventions, and key behaviours.
 
@@ -13,30 +13,53 @@ Automated daily-log tool for BMW Lab students at NTUST. Posts one GitHub issue c
 
 Spec: [SOP daily-log.md § Auto Daily-log](https://github.com/bmw-ece-ntust/SOP/blob/master/daily-log.md#auto-daily-log)
 
+This repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`) is also the **home for the Claude daily-log skill group**. `install.sh` copies `skills/` into `~/.claude/skills`, `scripts/` into `~/.claude/prompts`, sets `DAILY_LOG_HOME`, and wires the `UserPromptSubmit` daily-log hook. The `ijosh-ch/claude` preference repo no longer carries these skills — it only points here.
+
+---
+
+## Skills
+
+| Skill | Trigger | Brief |
+|---|---|---|
+| `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `Work Start:` format, push, write an LTM session record. Lab orgs only. |
+| `daily-log` | `/daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). The posting step, run after committing. |
+| `verify-daily-log` | `/verify-daily-log` | Cross-check the daily-log against GitHub commits + LTM worklogs and fill only missing days. |
+
 ---
 
 ## Repository Layout
 
 ```
-auto-daily-log/
+daily-log/
 ├── main.py                        # Entrypoint: adds src/ to path, auto-loads env.yaml
+├── install.sh                     # Installs skills → ~/.claude/skills, prompts → ~/.claude/prompts, sets DAILY_LOG_HOME, wires the UserPromptSubmit daily-log hook, builds the venv
 ├── env.example.yaml               # Config template — copy to env.yaml (safe to commit)
 ├── env.local.example.yaml         # Template for gitignored private overrides → env.local.yaml
 ├── reorder-comments.py            # Standalone: gap analysis + chronological reorder of issue comments
 ├── fill-from-calendar.py          # Standalone: fill missing entries from ICS/iCal feed or OAuth
+├── enable_nemotron_copilot.py     # Standalone: register the remote vLLM Nemotron model as a custom OpenAI-compatible model in VS Code Copilot Chat
 ├── requirements.txt               # Runtime deps: PyYAML; optional Google Calendar libs
 ├── README.md                      # Usage guide and Quick Claude Prompts for common tasks
 ├── CLAUDE.md                      # Static knowledge snapshot for LLMs (this file)
 ├── .sop-hash                      # SHA-256[:16] of the SOP ## Auto Daily-log section
 ├── .claude/
-│   └── settings.local.json        # Project-local Claude Code permissions (bypassPermissions)
+│   └── settings.local.json        # Project-local Claude Code permissions (gitignored; settings.json is local too)
 ├── .github/
 │   ├── copilot-instructions.md    # Per-repo Copilot context (project purpose, conventions)
 │   └── workflows/
 │       └── sop-check.yml          # Midnight weekday check against SOP (needs SOP_READ_TOKEN secret)
+├── skills/                        # Claude daily-log skill group (installed by install.sh)
+│   ├── catalog.md                 # Index of the skill group; explains install + hook wiring
+│   ├── daily-log/SKILL.md         # /daily-log — post entries to progress-plan#366 (the posting step)
+│   ├── daily-log-commit/SKILL.md  # /daily-log-commit — reconcile 4 files, commit (SOP Work Start format), push, write LTM record
+│   └── verify-daily-log/SKILL.md  # /verify-daily-log — cross-check daily-log vs commits + LTM worklogs, fill gaps
+├── scripts/                       # Prompt + hook scripts (installed into ~/.claude/prompts)
+│   ├── auto-daily-log.md          # Canonical daily-log-commit prompt (fallback when GitHub unreachable)
+│   └── fetch-auto-daily-log.sh    # UserPromptSubmit hook: detect git push/commit, resolve session log, inject the prompt
 ├── lab-automation/
-│   ├── setup-memory.sh            # Bootstrap: writes ~/.claude/settings.json, mcp.json, ~/CLAUDE.md, ~/.copilot/instructions.md
-│   ├── global-claude.md           # Source for ~/CLAUDE.md (global Claude memory instructions)
+│   ├── deploy-lab-llm.sh          # ONE-TOUCH: clone/update llm-prefs + llm-skill-ltm + daily-log, install prefs + all skills + LTM + hooks, optional --backfill, DB self-check
+│   ├── setup-memory.sh            # Prefs + base settings: writes ~/.claude/CLAUDE.md + ~/.copilot/instructions.md + ~/.claude/settings.json, then runs the LTM install (skipped when LAB_DEPLOY_SKIP_LTM=1)
+│   ├── global-claude.md           # Source for ~/.claude/CLAUDE.md (global AI prefs, mirrored from bmw-ece-ntust/llm-prefs)
 │   └── global-copilot.md          # Source for ~/.copilot/instructions.md (global Copilot instructions)
 └── src/dailylog/
     ├── cli.py                     # Argument parser and main orchestration
@@ -98,13 +121,15 @@ Copy `env.local.example.yaml` → `env.local.yaml`. Used by `fill-from-calendar.
 <one-line goal>
 
 **Daily-logs**:
-- `HH.MM - HH.MM`: [description](https://github.com/org/repo/blob/abc1234/path/file.md#section)
-- `HH.MM - `: <ongoing activity>
+- `HH.MM - HH.MM` [owner/repo]: [description](https://github.com/org/repo/blob/abc1234/path/file.md#section)
+- `HH.MM - ` [owner/repo]: <ongoing activity>
 ```
 
 Rules:
 - Date heading: `### YYYY/MM/DD` (Asia/Taipei timezone)
 - Time ticks use **dot notation**: `HH.MM` (not colons)
+- One bullet = one session on one project. Tag each bullet with its `[owner/repo]` project (owner = the GitHub account, org or personal; repo = name only). The tool fills this from the commit's `repo_full_name`.
+- Tasks may overlap in time (agentic AI runs tasks concurrently); overlapping ranges across different `[owner/repo]` tags are allowed.
 - Evidence link must point to a **specific file blob URL** with 7-char commit hash + anchor
 - Special time-tick values: `` `SICK LEAVE` ``, `` `HOLIDAY` ``, `` `ABSENT` ``
 
@@ -189,20 +214,26 @@ If the `## Auto Daily-log` section hash changes from `.sop-hash`, the workflow o
 
 ---
 
-## Long-Term Memory (MySQL)
+## Long-Term Memory (per-user Postgres)
 
-The `mysql-memory` MCP server is configured globally in `~/.claude/settings.json` and connects directly to `llm_memory` on the BMW Lab VM at `140.118.122.119:3306`.
+The lab LTM is the per-user Postgres store managed by the **`llm-skill-ltm`** repo (one DB per member on the lab box, reached over an SSH tunnel; attribution is by GitHub account). It supersedes the old `mysql-memory` MCP. It works the same in Claude Code and Cowork because the `memory` skill is installed into `~/.claude/skills` by `llm-skill-ltm/install.sh`, which also wires the SessionStart activity hook.
 
-**Session start** — load last 5 sessions:
+What it stores (no raw prompts/responses):
+- `activity` — one row per repo per day (SessionStart hook + `memory-backfill.sh`).
+- `worklog` — one row per session with **exact start/end timestamps** (`stm-backup.sh`); use these for daily-log start times.
+- Each row's `metadata` keeps `owner` (the GitHub account, org or personal) and `repo` (name only) as **separate fields**, so activities group per project for the daily-log.
+
+**Session start** — recall recent work for a project via the `memory` skill (recall-by-repo):
 ```sql
-SELECT s.id, s.repo, s.start_at, s.end_at, s.commit_title, ss.summary
-FROM sessions s LEFT JOIN session_summaries ss ON ss.session_id = s.id
-ORDER BY s.start_at DESC LIMIT 5;
+SELECT metadata->>'date', metadata->>'machine', metadata->>'branch', type, description
+FROM memory
+WHERE metadata->>'owner' = :'owner' AND metadata->>'repo' = :'repo'
+ORDER BY metadata->>'date' DESC;
 ```
 
-**Session end** — insert before committing: `sessions` → `prompts` → `session_summaries`, then `UPDATE sessions SET result_commit` after push. Full procedure: [SOP lab-automation/llm-memory.md](https://github.com/bmw-ece-ntust/SOP/blob/master/lab-automation/llm-memory.md).
+**Feeding the daily-log** — combine commit history with the matching `worklog` rows to get each session's start/end time, then emit one bullet per session tagged with `[owner/repo]`.
 
-Bootstrap a new machine: `bash lab-automation/setup-memory.sh`
+Setup / bootstrap a machine: see `llm-skill-ltm` (`setup.sh` → `install.sh`).
 
 ---
 

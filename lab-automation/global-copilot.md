@@ -1,37 +1,19 @@
 # Global Copilot Instructions — ijosh-ch
 
-## Long-Term Memory (MySQL)
+## Long-Term Memory (PostgreSQL)
 
-A `mysql-memory` MCP tool is available in VS Code. It connects directly to `llm_memory` on the BMW Lab VM at `140.118.122.119:3306`.
+The lab LTM is a **per-user PostgreSQL** store on the BMW Lab box, reached over an SSH tunnel and managed by the [`llm-skill-ltm`](https://github.com/bmw-ece-ntust/llm-skill-ltm) repo (replaces the old MySQL setup). No raw prompts/responses are stored — only distilled knowledge plus `activity`/`worklog` rows attributed by GitHub account, with `owner` (the account, org or personal) and `repo` (name only) kept as separate `metadata` fields.
 
-**At the START of every session**, run this to load recent context:
-
-```sql
-SELECT s.id, s.repo, s.start_at, s.end_at, s.commit_title, ss.summary
-FROM sessions s
-LEFT JOIN session_summaries ss ON ss.session_id = s.id
-ORDER BY s.start_at DESC
-LIMIT 5;
-```
-
-**At the END of every session**, before committing, insert records:
+**At the START of every session**, recall recent work for the current project (recall-by-repo):
 
 ```sql
--- 1. Open session
-INSERT INTO sessions (github_username, github_email, repo, start_at, end_at, base_commit, commit_title)
-VALUES ('Ian Joseph Chandra', 'ianjoseph2204@gmail.com', '<owner/repo>', '<start>', '<end>', '<base_sha>', '<title>');
-SET @sid = LAST_INSERT_ID();
-
--- 2. Log prompts (one row per key exchange)
-INSERT INTO prompts (session_id, tool, prompted_at, prompt_summary, response_summary)
-VALUES (@sid, 'copilot', '<timestamp>', '<prompt summary>', '<response summary>');
-
--- 3. Session summary (reused as git commit "Summary")
-INSERT INTO session_summaries (session_id, summary)
-VALUES (@sid, '<one-paragraph summary>');
+SELECT metadata->>'date', metadata->>'machine', metadata->>'branch', type, description
+FROM memory
+WHERE metadata->>'owner' = :'owner' AND metadata->>'repo' = :'repo'
+ORDER BY metadata->>'date' DESC;
 ```
 
-After pushing: `UPDATE sessions SET result_commit = '<new_hash>' WHERE id = <sid>;`
+Session activity and worklog rows (with exact start/end timestamps) are recorded automatically by the `llm-skill-ltm` SessionStart hook and `stm-backup.sh` — no manual inserts. Use the `worklog` start/end times when generating daily-log bullets. Full design: [bmw-ece-ntust/llm-skill-ltm — docs/ARCHITECTURE.md](https://github.com/bmw-ece-ntust/llm-skill-ltm/blob/master/docs/ARCHITECTURE.md).
 
 ## Identity
 

@@ -13,6 +13,7 @@ reminder.md
 
 # macOS
 .DS_Store
+.claude/settings.json
 .claude/settings.local.json
 .claude/model-policy.state.json
 graphify-out/
