@@ -217,6 +217,7 @@ def render_new_day_template(d: date) -> str:
     ds = d.strftime("%Y/%m/%d")
     return (
         f"### {ds}\n\n"
+        f"**Reviewed by**: <GitHub username>\n\n"
         f"**Short-term Goal**:\n"
         f"<Goal>\n\n"
         f"**Daily-logs**:\n"
@@ -228,6 +229,8 @@ def render_new_day_from_commits(d: date, commits: list[Commit]) -> str:
     ds = d.strftime("%Y/%m/%d")
     lines = [
         f"### {ds}",
+        "",
+        "**Reviewed by**: <GitHub username>",
         "",
         "**Short-term Goal**:",
         "<Goal>",
@@ -249,6 +252,8 @@ def render_new_day_from_suggestions(d: date, suggestions: list[str]) -> str:
     ds = d.strftime("%Y/%m/%d")
     lines = [
         f"### {ds}",
+        "",
+        "**Reviewed by**: <GitHub username>",
         "",
         "**Short-term Goal**:",
         "<Goal>",
