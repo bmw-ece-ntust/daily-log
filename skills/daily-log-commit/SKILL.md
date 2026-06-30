@@ -17,23 +17,31 @@ old hook that fired on any literal match.
 
 ## Workflow
 
-1. **Reconcile the 4 files** against the repo: `CLAUDE.md` (file list/conventions,
-   no session log), `CONTEXT.md` (architecture/services), `MEMORY.md` (append a
-   new `### yyyy/mm/dd` entry, never edit past ones), `TODO.md` (check off done,
-   add new, re-prioritize Now/Next/Later).
-2. **Session timing**: `git log -1 --format="%H %ai"` is the last-commit boundary;
-   `date "+%Y/%m/%d %H:%M"` is the end. The session start is the first user-message
-   timestamp in the VS Code transcript that falls after the last commit (the
-   UserPromptSubmit hook injects the transcript path). Ask only if unavailable.
+1. **Reconcile the 4 files** against the repo: `AGENTS.md`/`CLAUDE.md` (tool-neutral
+   base + adapter: file list, conventions, no session log), `CONTEXT.md`
+   (architecture/services), `MEMORY.md` (append a new entry
+   `### yyyy/mm/dd — [7-digit hash] "<title>"` with `**Duration**` + `**Summary**`,
+   never edit past ones), `TODO.md` (check off done, add new, re-prioritize
+   Now/Next/Later).
+2. **Working hour, per day, from the LTM** (Asia/Taipei): `git log -1 --format="%H %ai"`
+   is the last-commit boundary; `date "+%Y/%m/%d %H:%M"` is the end. A single push can
+   cover several days, so recall this repo's `worklog`/`activity` rows after the last
+   commit (the `memory` skill, recall-by-repo on `owner`+`repo`), group them by calendar
+   day, and for each day sum the hours and distil the activities. The whole-span start is
+   the first user-message timestamp after the last commit (the UserPromptSubmit hook
+   injects the transcript path); ask only if transcript and LTM are both unavailable.
 3. **Stage by name** (never `git add -A`); keep `.claude/settings.local.json` out.
    The `.githooks/pre-commit` hook auto-scrubs session-noise/secrets from
    `.claude/settings.json` on commit, so no manual revert is needed; just confirm
    the hook ran ("scrubbed session-noise") if that file was staged.
-4. **Commit** in the SOP format, no LLM co-author:
+4. **Commit** in the SOP format, no LLM co-author. The `work duration` block has one
+   line per day (single-day work collapses to one `work duration: ... ` line):
    ```
    <Short imperative summary title>
 
-   work duration: <yyyy/mm/dd_hh:mm - yyyy/mm/dd_hh:mm>
+   work duration:
+   - yyyy/mm/dd_hh:mm - hh:mm (N.Nh): <what was done that day, from the LTM>
+   - yyyy/mm/dd_hh:mm - hh:mm (N.Nh): <what was done that day, from the LTM>
 
    Summary:
    <one paragraph>

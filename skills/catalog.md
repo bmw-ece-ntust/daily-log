@@ -8,7 +8,7 @@ references this repo, it no longer carries these skills.
 
 | Skill | Scope | Trigger | Brief |
 | --- | --- | --- | --- |
-| `daily-log-commit` | global | `/daily-log-commit` (auto on real `git push`) | Reconcile the 4 project files, commit in SOP `Work Start:` format, push, write an LTM session record. Lab orgs only. |
+| `daily-log-commit` | global | `/daily-log-commit` (auto on real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
 | `daily-log` | global | `/daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
 | `verify-daily-log` | global | `/verify-daily-log` | Quickly verify the daily-log vs commits + LTM and fill only missing days. Token-efficient. |
 

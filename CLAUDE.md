@@ -21,7 +21,7 @@ This repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`) is also the **h
 
 | Skill | Trigger | Brief |
 |---|---|---|
-| `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `Work Start:` format, push, write an LTM session record. Lab orgs only. |
+| `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
 | `daily-log` | `/daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). The posting step, run after committing. |
 | `verify-daily-log` | `/verify-daily-log` | Cross-check the daily-log against GitHub commits + LTM worklogs and fill only missing days. |
 
@@ -51,7 +51,7 @@ daily-log/
 ├── skills/                        # Claude daily-log skill group (installed by install.sh)
 │   ├── catalog.md                 # Index of the skill group; explains install + hook wiring
 │   ├── daily-log/SKILL.md         # /daily-log — post entries to progress-plan#366 (the posting step)
-│   ├── daily-log-commit/SKILL.md  # /daily-log-commit — reconcile 4 files, commit (SOP Work Start format), push, write LTM record
+│   ├── daily-log-commit/SKILL.md  # /daily-log-commit — reconcile 4 files, commit (SOP work duration format), push, write LTM record
 │   └── verify-daily-log/SKILL.md  # /verify-daily-log — cross-check daily-log vs commits + LTM worklogs, fill gaps
 ├── scripts/                       # Prompt + hook scripts (installed into ~/.claude/prompts)
 │   ├── auto-daily-log.md          # Canonical daily-log-commit prompt (fallback when GitHub unreachable)
