@@ -36,3 +36,18 @@ Dated session log of decisions, patterns, and gotchas. Append-only; never edit p
 - **Session-timing gotcha.** This transcript only contained today's reconcile session
   (first user message 16:12), but the underlying work was authored 2026/06/24–06/27 per
   file mtimes. Logged the work as a multi-day range accordingly.
+
+### 2026/06/30
+
+- **Synced `scripts/auto-daily-log.md` to the SOP reconcile prompt.** Added the
+  "Check the knowledge graph first (graphify)" step so the reconcile syncs the file list
+  and architecture from `graphify-out/` before reading files wholesale; kept the per-day
+  `work duration` block.
+- **Fixed stale `metadata->>'org'` → `metadata->>'owner'`** in the worklog SQL of both the
+  `daily-log` and `verify-daily-log` skills. After the owner/repo split the old key matched
+  nothing, so the hours query returned empty.
+- **Recomposed both skills to the per-`[owner/repo]` task-block format** (`daily-log.md`
+  Formatting Standards): one block per repo carrying the 7-digit short-hash commit link as
+  evidence, with hour-grouped `HH.MM - HH.MM: <activity>` bullets under it; `??:?? - HH.MM`
+  for an unknown start; calendar-meeting-without-minutes placeholder. Added graphify-first
+  as step 0 of `daily-log-commit`. Recomputed `.sop-hash` (`b2b3a1bd018495ab`).

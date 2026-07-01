@@ -17,6 +17,12 @@ old hook that fired on any literal match.
 
 ## Workflow
 
+0. **Graphify first.** Before reconciling, sync the repo's current file list and
+   architecture from the knowledge graph instead of reading files wholesale: if
+   `graphify-out/graph.json` exists, `graphify --update` then `graphify query`; otherwise
+   build it once with `graphify` on a non-trivial repo. Reconcile `AGENTS.md`/`CLAUDE.md`
+   and `CONTEXT.md` from the graph, reading files only where it cannot answer. Fall back to
+   direct reads if graphify is unavailable.
 1. **Reconcile the 4 files** against the repo: `AGENTS.md`/`CLAUDE.md` (tool-neutral
    base + adapter: file list, conventions, no session log), `CONTEXT.md`
    (architecture/services), `MEMORY.md` (append a new entry

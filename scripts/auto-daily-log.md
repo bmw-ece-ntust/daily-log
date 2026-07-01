@@ -1,5 +1,14 @@
 Reconcile all 4 project memory files with the current state of the repository, then commit and push.
 
+### Check the knowledge graph first (graphify)
+
+Before reconciling, sync your understanding of the repo from the graphify knowledge graph rather than reading files wholesale:
+
+- If `graphify-out/graph.json` exists, refresh it incrementally (`graphify --update`) and answer the repo's current file list, modules, and architecture with `graphify query` first. Reconcile `AGENTS.md`/`CLAUDE.md` (file list, conventions) and `CONTEXT.md` (architecture, key files) primarily from the graph; read individual files only where the graph cannot answer.
+- If it does not exist on a non-trivial repo, build it once with `graphify`, then query it.
+
+This keeps the reconcile token-efficient as the repo grows. If graphify is unavailable, fall back to direct file reads.
+
 ### Reconcile the 4 project memory files
 
 These four files at the repo root are the single source of truth for the project. Reconcile each before committing:

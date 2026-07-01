@@ -13,7 +13,7 @@ Prioritized task list. `[x]` = done, `[ ]` = open.
 
 - [ ] Backfill `[owner/repo]` tags on existing `progress-plan#366` comments that predate the tag format.
 - [ ] Update `README.md` Quick Claude Prompts to mention the three skills (`/daily-log`, `/daily-log-commit`, `/verify-daily-log`).
-- [ ] Re-check `.sop-hash` against the current SOP `## Auto Daily-log` section after the format changes (tags + `HH.MM`).
+- [x] Re-check `.sop-hash` against the current SOP `## Auto Daily-log` section after the format changes (tags + `HH.MM`) — recomputed to `b2b3a1bd018495ab`; synced `auto-daily-log.md` + skills to the SOP reconcile prompt (graphify-first, per-`[owner/repo]` blocks); fixed `org`→`owner` in the worklog SQL.
 
 ## Later
 

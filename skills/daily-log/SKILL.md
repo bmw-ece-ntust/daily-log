@@ -47,7 +47,7 @@ Build each day's detail from two sources of truth, then attach evidence.
           min(metadata->>'start') AS started, max(metadata->>'end') AS ended
    FROM memory
    WHERE type='worklog' AND metadata->>'user' = '<gh-user>'
-     AND metadata->>'org' IN ('bmw-ece-ntust','bmw-ntust-internship','raycg')
+     AND metadata->>'owner' IN ('bmw-ece-ntust','bmw-ntust-internship','raycg')
      AND metadata->>'date' >= '<since>'
    GROUP BY 1,2,3 ORDER BY d;
    ```
@@ -61,11 +61,20 @@ Build each day's detail from two sources of truth, then attach evidence.
    ```
    Use the 7-digit sha for the evidence link (`.../tree/<7hex>#<section>`).
 
-3. **Verify + compose**: the `HH.MM – HH.MM` tick comes from the **worklog** (accurate
-   hours), the bullet text + evidence link come from the **commit**. A bullet is
-   corroborated when LTM work on a repo is backed by a commit on that repo the same
-   day. LTM-only days (worked via LLM, no commit) are still logged from the worklog
-   interval, flagged as lacking commit evidence. Commit-only days are seeded by the tool.
+3. **Verify + compose** as **hourly summary bullets** (see `daily-log.md` Formatting
+   Standards): one bullet per interval `` `HH.MM - HH.MM` [owner/repo]: [<summary>](doc
+   link) ``, the summary linking the **study-notes documentation** at that commit
+   (`.../tree/<7hex>#<section>`, resolved via the tool's `--link-to-files`), with one
+   sub-bullet per task linking its **documentation section header**. Never link the bare
+   `/commit/<hash>`. Times come from the **worklog**; if a `start` is missing and no
+   calendar event covers it, write `??:?? - HH.MM` and flag for review. **Collapse bulk
+   commits** (e.g. a propagation across N repos) into one summary bullet, and **merge
+   consecutive same-`[owner/repo]` intervals** into one bullet with an extended end time
+   (the LTM keeps the detail; the daily-log is the summary). LTM-only
+   intervals (no commit) are still logged, flagged as lacking documentation evidence;
+   commit-only days are seeded by the tool. A Google Calendar meeting with no minutes yet
+   is `[<meeting-title>](minutes documentation header link with 7-digit hash)`
+   (placeholder), flagged for review.
 
 ## Step 3 — Map the request to a command
 

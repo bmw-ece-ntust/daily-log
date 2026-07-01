@@ -31,7 +31,7 @@ few missing days, so cost scales with the gap, not the history.
   "$PSQL" "$CONN" -tAF'|' -c "SELECT metadata->>'date', metadata->>'repo',
        min(metadata->>'start'), max(metadata->>'end')
      FROM memory WHERE type='worklog' AND metadata->>'user'='<gh-user>'
-       AND metadata->>'org' IN ('bmw-ece-ntust','bmw-ntust-internship','raycg')
+       AND metadata->>'owner' IN ('bmw-ece-ntust','bmw-ntust-internship','raycg')
        AND metadata->>'date' >= '<date>' GROUP BY 1,2 ORDER BY 1"
   ```
 
@@ -41,12 +41,19 @@ missing or incomplete in the log (from `reminder.md`). **Skip days already compl
 (logged + evidence present). Only the gap list moves forward — this is the speed.
 
 ### 3. Fill only the gaps — minimal LLM
-For each gap day compose the SOP entry:
-- `HH.MM – HH.MM` tick(s) from the **worklog** interval(s) (accurate hours).
-- bullet text + evidence link from that day's **commits**
-  (`gh api repos/<repo>/commits?author=<me>&since=<day>&until=<day+1>`), evidence =
-  `.../tree/<7hex>#<section>`.
-- LTM-only day (no commit) → log the interval, flag "no commit evidence".
+For each gap day compose the SOP entry as **hourly summary bullets** (see `daily-log.md`
+Formatting Standards):
+- One bullet per interval: `` `HH.MM - HH.MM` [owner/repo]: [<summary>](doc link) `` — the
+  summary links the **study-notes documentation** at that commit (`.../tree/<7hex>#<section>`),
+  resolved from the commit's primary `.md` (use the tool's `--link-to-files`). Under it,
+  one sub-bullet per task linking the specific **documentation section header**. Never link
+  the bare `/commit/<hash>`.
+- Times from the **worklog** intervals; if a worklog `start` is absent and no calendar event
+  covers it, write `??:?? - HH.MM` and flag for review (never invent the time).
+- **Collapse bulk commits** (e.g. a propagation across N repos) into one summary bullet, and **merge consecutive same-`[owner/repo]` intervals** into one bullet with an extended end time (the LTM keeps the detail; the daily-log is the summary).
+- LTM-only day (no commit) → log the interval, flag "no documentation evidence".
+- Calendar meeting with no minutes yet → `[<meeting-title>](minutes documentation header link
+  with 7-digit hash)` (placeholder), flagged for review.
 
 ### 4. Apply + report
 Dry-run, show the gap list, confirm, then post: `main.py --since <date>
