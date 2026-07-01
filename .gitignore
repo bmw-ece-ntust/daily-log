@@ -12,8 +12,8 @@ env.local.yaml
 reminder.md
 
 # macOS
-.DS_Store
-.claude/settings.json
-.claude/settings.local.json
-.claude/model-policy.state.json
+
+# claude preference: personal/machine config + generated graph stay local
+.claude/
 graphify-out/
+.DS_Store
