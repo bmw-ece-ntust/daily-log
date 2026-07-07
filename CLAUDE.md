@@ -21,8 +21,9 @@ This repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`) is also the **h
 
 | Skill | Trigger | Brief |
 |---|---|---|
+| `daily-plan` | `/daily-plan` | Post the morning plan for today to `progress-plan#366`: a checklist of measurable targets, time ticks optional (none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening `/daily-log` fills the same comment in place. |
 | `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
-| `daily-log` | `/daily-log` | Post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified). The posting step, run after committing. |
+| `daily-log` | `/daily-log` | Commit + push all lab repos with pending work (`daily-log-commit` sweep), then post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. |
 | `verify-daily-log` | `/verify-daily-log` | Cross-check the daily-log against GitHub commits + LTM worklogs and fill only missing days. |
 
 ---
@@ -50,6 +51,7 @@ daily-log/
 │       └── sop-check.yml          # Midnight weekday check against SOP (needs SOP_READ_TOKEN secret)
 ├── skills/                        # Claude daily-log skill group (installed by install.sh)
 │   ├── catalog.md                 # Index of the skill group; explains install + hook wiring
+│   ├── daily-plan/SKILL.md        # /daily-plan — post the morning target checklist for today (times optional)
 │   ├── daily-log/SKILL.md         # /daily-log — post entries to progress-plan#366 (the posting step)
 │   ├── daily-log-commit/SKILL.md  # /daily-log-commit — reconcile 4 files, commit (SOP work duration format), push, write LTM record
 │   └── verify-daily-log/SKILL.md  # /verify-daily-log — cross-check daily-log vs commits + LTM worklogs, fill gaps

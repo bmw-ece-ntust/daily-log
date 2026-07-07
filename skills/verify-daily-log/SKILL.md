@@ -43,15 +43,24 @@ missing or incomplete in the log (from `reminder.md`). **Skip days already compl
 ### 3. Fill only the gaps — minimal LLM
 For each gap day compose the SOP entry as **hourly summary bullets** (see `daily-log.md`
 Formatting Standards):
-- One bullet per interval: `` `HH.MM - HH.MM` [owner/repo]: [<summary>](doc link) `` — the
-  summary links the **study-notes documentation** at that commit (`.../tree/<7hex>#<section>`),
-  resolved from the commit's primary `.md` (use the tool's `--link-to-files`). Under it,
-  one sub-bullet per task linking the specific **documentation section header**. Never link
+- One bullet per interval: `` `HH.MM - HH.MM` [owner/repo]: [<achieved target>](doc link) `` —
+  linking the **study-notes documentation** at that commit (`.../tree/<7hex>#<section>`),
+  resolved from the commit's primary `.md` (use the tool's `--link-to-files`). Never link
   the bare `/commit/<hash>`.
+- **Concise, target-first wording**: the bullet states *which target was achieved* —
+  verb-first, past tense, ≤ 12 words before the link. **No sub-bullets**: detail lives in
+  the linked study-notes. Several commits toward one target = one bullet; two distinct
+  targets in one interval = two bullets sharing the time range. Distil commit messages,
+  never paste them; drop file lists and `(parallel)` / `(N commits)` markers. Short-term
+  Goal = one plain line, ≤ 10 words.
 - Times from the **worklog** intervals; if a worklog `start` is absent and no calendar event
   covers it, write `??:?? - HH.MM` and flag for review (never invent the time).
 - **Collapse bulk commits** (e.g. a propagation across N repos) into one summary bullet, and **merge consecutive same-`[owner/repo]` intervals** into one bullet with an extended end time (the LTM keeps the detail; the daily-log is the summary).
 - LTM-only day (no commit) → log the interval, flag "no documentation evidence".
+- Gap day that already has a morning **daily-plan** comment (checklist targets from the
+  `daily-plan` skill) → **edit that comment in place** (achieved target → duration
+  bullet + evidence; unachieved → `- [ ]` with ` — pending: <reason>`), never a second
+  comment for the day.
 - Calendar meeting with no minutes yet → `[<meeting-title>](minutes documentation header link
   with 7-digit hash)` (placeholder), flagged for review.
 
