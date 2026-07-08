@@ -4,6 +4,24 @@ Dated session log of decisions, patterns, and gotchas. Append-only; never edit p
 
 ---
 
+### 2026/07/08
+
+- **`scripts/fetch-auto-daily-log.sh` now chains a Step 2 reminder after the Step 1
+  commit prompt.** Once the injected content (fetched SOP section or the local
+  `auto-daily-log.md` fallback) is printed, the hook appends a second block telling the
+  agent/user to run `/daily-log` after the push succeeds, so the lab progress-plan
+  comment gets posted in the same breath as the commit+push. Fires regardless of
+  whether Step 1's content came from GitHub or the offline fallback; the appended block
+  self-notes that `/daily-log` no-ops outside the lab orgs, so non-lab repos are
+  unaffected.
+- **Doc drift fix.** `CONTEXT.md` and `CLAUDE.md` still said "the three daily-log
+  skills" / listed only `daily-log`, `daily-log-commit`, `verify-daily-log` in the
+  skill-group summary, even though `daily-plan` was added in the prior commit
+  (`17b4656`). Updated both to the four-skill roster and reworded the
+  `fetch-auto-daily-log.sh` file-map rows to mention the new Step 2 behavior.
+  `TODO.md`'s "mention the three skills" README item was similarly reworded to "all
+  four skills."
+
 ### 2026/06/29
 
 - **MySQL → PostgreSQL LTM migration finished across the docs.** `CLAUDE.md`,

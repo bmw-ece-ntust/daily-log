@@ -57,7 +57,7 @@ daily-log/
 │   └── verify-daily-log/SKILL.md  # /verify-daily-log — cross-check daily-log vs commits + LTM worklogs, fill gaps
 ├── scripts/                       # Prompt + hook scripts (installed into ~/.claude/prompts)
 │   ├── auto-daily-log.md          # Canonical daily-log-commit prompt (fallback when GitHub unreachable)
-│   └── fetch-auto-daily-log.sh    # UserPromptSubmit hook: detect git push/commit, resolve session log, inject the prompt
+│   └── fetch-auto-daily-log.sh    # UserPromptSubmit hook: detect git push/commit, resolve session log, inject the Step 1 prompt, append Step 2 (/daily-log) reminder
 ├── lab-automation/
 │   ├── deploy-lab-llm.sh          # ONE-TOUCH: clone/update llm-prefs + llm-skill-ltm + daily-log, install prefs + all skills + LTM + hooks, optional --backfill, DB self-check
 │   ├── setup-memory.sh            # Prefs + base settings: writes ~/.claude/CLAUDE.md + ~/.copilot/instructions.md + ~/.claude/settings.json, then runs the LTM install (skipped when LAB_DEPLOY_SKIP_LTM=1)

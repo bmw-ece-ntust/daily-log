@@ -12,7 +12,7 @@ Prioritized task list. `[x]` = done, `[ ]` = open.
 ## Next
 
 - [ ] Backfill `[owner/repo]` tags on existing `progress-plan#366` comments that predate the tag format.
-- [ ] Update `README.md` Quick Claude Prompts to mention the three skills (`/daily-log`, `/daily-log-commit`, `/verify-daily-log`).
+- [ ] Update `README.md` Quick Claude Prompts to mention all four skills (`/daily-log`, `/daily-log-commit`, `/daily-plan`, `/verify-daily-log`).
 - [x] Re-check `.sop-hash` against the current SOP `## Auto Daily-log` section after the format changes (tags + `HH.MM`) — recomputed to `b2b3a1bd018495ab`; synced `auto-daily-log.md` + skills to the SOP reconcile prompt (graphify-first, per-`[owner/repo]` blocks); fixed `org`→`owner` in the worklog SQL.
 
 ## Later
@@ -22,6 +22,7 @@ Prioritized task list. `[x]` = done, `[ ]` = open.
 
 ## Done
 
+- [x] Chain a Step 2 reminder onto `scripts/fetch-auto-daily-log.sh` so the git-push hook prompts `/daily-log` (post to `progress-plan#366`) right after Step 1's commit+push succeeds.
 - [x] Migrate all LTM references from MySQL/`mysql-memory` MCP to per-user PostgreSQL (`llm-skill-ltm`).
 - [x] Add `[owner/repo]` project tags to the bullet contract in `dailylog_md.py`.
 - [x] Rewrite `setup-memory.sh` to prefs + base settings only, delegating LTM install.
