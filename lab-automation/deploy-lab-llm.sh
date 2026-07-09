@@ -4,10 +4,10 @@
 # Installs EVERYTHING for the lab's LLM preferences on a macOS machine, idempotently:
 #   1. dependencies (git, gh, jq, libpq/psql, bitwarden-cli) via Homebrew
 #   2. clone or fast-forward the three lab repos under ~/Documents/GitHub
-#        - bmw-ece-ntust/llm-prefs       (global AI preferences)
+#        - bmw-ece-ntust/llm-core       (global AI preferences)
 #        - bmw-ece-ntust/llm-skill-ltm   (PostgreSQL long-term memory skills + hook)
 #        - bmw-ece-ntust/daily-log       (daily-log skills + Python tool + push hook)
-#   3. global prefs -> llm-prefs/install.sh (renders ~/.claude/CLAUDE.md + settings + skills)
+#   3. global prefs -> llm-core/install.sh (renders ~/.claude/CLAUDE.md + settings + skills)
 #   4. LTM skills + SessionStart activity hook + live DB check (llm-skill-ltm/setup.sh)
 #   5. daily-log skills + UserPromptSubmit push hook + Python venv (daily-log/install.sh)
 #   6. (optional) --backfill: back up this machine's past sessions to the LTM
@@ -24,7 +24,7 @@ set -euo pipefail
 # ── Config ────────────────────────────────────────────────────────────────────
 GH_DIR="${GH_DIR:-$HOME/Documents/GitHub}"
 GH_BASE="https://github.com/bmw-ece-ntust"
-PREFS_REPO="llm-prefs"
+PREFS_REPO="llm-core"
 LTM_REPO="llm-skill-ltm"
 DAILYLOG_REPO="daily-log"
 DO_BACKFILL=0
@@ -74,18 +74,18 @@ export LTM_HOME="$LTM_DIR"
 SELF_DAILYLOG="$(cd "$(dirname "$0")/.." && pwd)"
 [ -f "$SELF_DAILYLOG/lab-automation/setup-memory.sh" ] && DAILYLOG_DIR="$SELF_DAILYLOG"
 
-# Prefer the canonical prefs file from llm-prefs if present.
+# Prefer the canonical prefs file from llm-core if present.
 for cand in "$PREFS_DIR/CLAUDE.md" "$PREFS_DIR/global-claude.md" "$PREFS_DIR/prefs/global-claude.md"; do
   [ -f "$cand" ] && export LAB_PREFS_FILE="$cand" && break
 done
 
-# ── 3. Global prefs (canonical: llm-prefs/install.sh; fallback: setup-memory.sh) ─
+# ── 3. Global prefs (canonical: llm-core/install.sh; fallback: setup-memory.sh) ─
 say "3/6 global prefs + base settings"
 if [ -f "$PREFS_DIR/install.sh" ]; then
-  info "running canonical llm-prefs installer"
-  ( cd "$PREFS_DIR" && bash install.sh ) 2>&1 | sed 's/^/    /' || warn "llm-prefs install reported an issue"
+  info "running canonical llm-core installer"
+  ( cd "$PREFS_DIR" && bash install.sh ) 2>&1 | sed 's/^/    /' || warn "llm-core install reported an issue"
 elif [ -f "$DAILYLOG_DIR/lab-automation/setup-memory.sh" ]; then
-  warn "llm-prefs not available — using the daily-log mirror (setup-memory.sh)"
+  warn "llm-core not available — using the daily-log mirror (setup-memory.sh)"
   LAB_DEPLOY_SKIP_LTM=1 bash "$DAILYLOG_DIR/lab-automation/setup-memory.sh" | sed 's/^/    /'
 else
   warn "no prefs installer found — skipped prefs"

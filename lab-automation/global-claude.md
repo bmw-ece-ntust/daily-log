@@ -1,6 +1,6 @@
 # Global Claude Instructions — BMW Lab AI Preferences
 
-Lab AI preferences, mirrored from [`bmw-ece-ntust/llm-prefs`](https://github.com/bmw-ece-ntust/llm-prefs). Installed by `setup-memory.sh` to `~/.claude/CLAUDE.md`, where Claude Code and Cowork load it as user-global memory. Applied to every project; project-level `CLAUDE.md` files stack on top and take precedence.
+Lab AI preferences, mirrored from [`bmw-ece-ntust/llm-core`](https://github.com/bmw-ece-ntust/llm-core). Installed by `setup-memory.sh` to `~/.claude/CLAUDE.md`, where Claude Code and Cowork load it as user-global memory. Applied to every project; project-level `CLAUDE.md` files stack on top and take precedence.
 
 ---
 

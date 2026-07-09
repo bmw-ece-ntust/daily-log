@@ -12,13 +12,13 @@ Prioritized task list. `[x]` = done, `[ ]` = open.
 ## Next
 
 - [ ] Backfill `[owner/repo]` tags on existing `progress-plan#366` comments that predate the tag format.
-- [ ] Update `README.md` Quick Claude Prompts to mention all four skills (`/daily-log`, `/daily-log-commit`, `/daily-plan`, `/verify-daily-log`).
+- [ ] Update `README.md` Quick Claude Prompts to mention all four skills (`/daily-log`, `/daily-log-commit`, `/daily-plan`, `/daily-log-audit`).
 - [x] Re-check `.sop-hash` against the current SOP `## Auto Daily-log` section after the format changes (tags + `HH.MM`) — recomputed to `b2b3a1bd018495ab`; synced `auto-daily-log.md` + skills to the SOP reconcile prompt (graphify-first, per-`[owner/repo]` blocks); fixed `org`→`owner` in the worklog SQL.
 
 ## Later
 
 - [ ] Document `enable_nemotron_copilot.py` usage (Tailscale IP, model id) in README.
-- [ ] Consider a single config source so `lab-automation/global-claude.md` and the live `llm-prefs` CLAUDE.md cannot drift.
+- [ ] Consider a single config source so `lab-automation/global-claude.md` and the live `llm-core` CLAUDE.md cannot drift.
 
 ## Done
 

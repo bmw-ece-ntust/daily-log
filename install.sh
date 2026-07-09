@@ -37,5 +37,5 @@ echo "==> python tool venv"
 "$REPO/.venv/bin/pip" install -q -r "$REPO/requirements.txt" 2>&1 | tail -1 || true
 [ -f "$REPO/env.yaml" ] || cp "$REPO/env.example.yaml" "$REPO/env.yaml"
 
-echo "==> done. Skills: daily-log, daily-log-commit, verify-daily-log."
-echo "    Needs gh auth, and (for verify) the LTM skills from bmw-ece-ntust/llm-skill-ltm."
+echo "==> done. Skills: daily-plan, daily-log, daily-log-commit, daily-log-audit."
+echo "    Needs gh auth, and (for audit) the LTM skills from bmw-ece-ntust/llm-skill-ltm."

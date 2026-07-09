@@ -14,7 +14,7 @@ Three things in one repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`):
    history, optionally Google Calendar, and posts/patches one daily-log comment per
    working day on `bmw-ece-ntust/progress-plan#366`.
 2. **Claude skill group** (`skills/`) — `daily-log`, `daily-log-commit`, `daily-plan`,
-   `verify-daily-log`, installed into `~/.claude/skills` by `install.sh`.
+   `daily-log-audit`, installed into `~/.claude/skills` by `install.sh`.
 3. **Lab automation** (`lab-automation/`) — bootstrap scripts that install global AI
    prefs and the PostgreSQL long-term memory across lab machines.
 
@@ -50,7 +50,7 @@ LTM worklogs ─────┘                                │
 | `skills/*/SKILL.md` | The four daily-log skills |
 | `scripts/auto-daily-log.md` | Canonical commit-prompt (also the hook's offline fallback) |
 | `scripts/fetch-auto-daily-log.sh` | UserPromptSubmit hook — detects git push/commit, injects the Step 1 commit prompt, then appends a Step 2 reminder to run `/daily-log` after the push succeeds |
-| `lab-automation/deploy-lab-llm.sh` | One-touch deploy of llm-prefs + llm-skill-ltm + daily-log |
+| `lab-automation/deploy-lab-llm.sh` | One-touch deploy of llm-core + llm-skill-ltm + daily-log |
 | `lab-automation/setup-memory.sh` | Writes global prefs + base settings, delegates LTM install to llm-skill-ltm |
 | `enable_nemotron_copilot.py` | Registers the local vLLM Nemotron model in VS Code Copilot Chat |
 

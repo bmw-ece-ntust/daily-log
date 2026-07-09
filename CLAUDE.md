@@ -24,7 +24,7 @@ This repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`) is also the **h
 | `daily-plan` | `/daily-plan` | Post the morning plan for today to `progress-plan#366`: a checklist of measurable targets, time ticks optional (none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening `/daily-log` fills the same comment in place. |
 | `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
 | `daily-log` | `/daily-log` | Commit + push all lab repos with pending work (`daily-log-commit` sweep), then post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. |
-| `verify-daily-log` | `/verify-daily-log` | Cross-check the daily-log against GitHub commits + LTM worklogs and fill only missing days. |
+| `daily-log-audit` | `/daily-log-audit` | Full-history audit vs the current SOP format: rewrite non-conforming entries in place and fill missing days (supersedes `verify-daily-log`; `--since <date>` = old quick gap-check). |
 
 ---
 
@@ -54,14 +54,14 @@ daily-log/
 │   ├── daily-plan/SKILL.md        # /daily-plan — post the morning target checklist for today (times optional)
 │   ├── daily-log/SKILL.md         # /daily-log — post entries to progress-plan#366 (the posting step)
 │   ├── daily-log-commit/SKILL.md  # /daily-log-commit — reconcile 4 files, commit (SOP work duration format), push, write LTM record
-│   └── verify-daily-log/SKILL.md  # /verify-daily-log — cross-check daily-log vs commits + LTM worklogs, fill gaps
+│   └── daily-log-audit/SKILL.md   # /daily-log-audit — full-history audit vs SOP format, rewrite non-conforming entries, fill gaps
 ├── scripts/                       # Prompt + hook scripts (installed into ~/.claude/prompts)
 │   ├── auto-daily-log.md          # Canonical daily-log-commit prompt (fallback when GitHub unreachable)
 │   └── fetch-auto-daily-log.sh    # UserPromptSubmit hook: detect git push/commit, resolve session log, inject the Step 1 prompt, append Step 2 (/daily-log) reminder
 ├── lab-automation/
-│   ├── deploy-lab-llm.sh          # ONE-TOUCH: clone/update llm-prefs + llm-skill-ltm + daily-log, install prefs + all skills + LTM + hooks, optional --backfill, DB self-check
+│   ├── deploy-lab-llm.sh          # ONE-TOUCH: clone/update llm-core + llm-skill-ltm + daily-log, install prefs + all skills + LTM + hooks, optional --backfill, DB self-check
 │   ├── setup-memory.sh            # Prefs + base settings: writes ~/.claude/CLAUDE.md + ~/.copilot/instructions.md + ~/.claude/settings.json, then runs the LTM install (skipped when LAB_DEPLOY_SKIP_LTM=1)
-│   ├── global-claude.md           # Source for ~/.claude/CLAUDE.md (global AI prefs, mirrored from bmw-ece-ntust/llm-prefs)
+│   ├── global-claude.md           # Source for ~/.claude/CLAUDE.md (global AI prefs, mirrored from bmw-ece-ntust/llm-core)
 │   └── global-copilot.md          # Source for ~/.copilot/instructions.md (global Copilot instructions)
 └── src/dailylog/
     ├── cli.py                     # Argument parser and main orchestration

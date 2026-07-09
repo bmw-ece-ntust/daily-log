@@ -16,7 +16,7 @@ set -euo pipefail
 LTM_REPO_URL="https://github.com/bmw-ece-ntust/llm-skill-ltm.git"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-# Preferences source. The canonical lab prefs live in bmw-ece-ntust/llm-prefs; when
+# Preferences source. The canonical lab prefs live in bmw-ece-ntust/llm-core; when
 # that repo is available locally (LAB_PREFS_FILE points at its CLAUDE.md), use it.
 # Otherwise fall back to the mirror committed in this repo.
 LAB_PREFS_FILE="${LAB_PREFS_FILE:-$REPO_DIR/lab-automation/global-claude.md}"
@@ -50,7 +50,7 @@ PYEOF
 # ── 2. Global Claude + Copilot instruction files ──────────────────────────────
 # Claude Code and Cowork read user-global memory from ~/.claude/CLAUDE.md
 # (NOT ~/CLAUDE.md at the home root, which is never loaded). These are the lab AI
-# preferences, sourced from bmw-ece-ntust/llm-prefs when available.
+# preferences, sourced from bmw-ece-ntust/llm-core when available.
 if [ ! -f "$LAB_PREFS_FILE" ]; then
   echo "⚠ prefs source not found: $LAB_PREFS_FILE — using repo mirror"
   LAB_PREFS_FILE="$REPO_DIR/lab-automation/global-claude.md"
