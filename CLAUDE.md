@@ -133,7 +133,7 @@ Rules:
 - One bullet = one session on one project. Tag each bullet with its `[owner/repo]` project (owner = the GitHub account, org or personal; repo = name only). The tool fills this from the commit's `repo_full_name`.
 - Tasks may overlap in time (agentic AI runs tasks concurrently); overlapping ranges across different `[owner/repo]` tags are allowed.
 - Evidence link must point to a **specific file blob URL** with 7-char commit hash + anchor
-- Special time-tick values: `` `SICK LEAVE` ``, `` `HOLIDAY` ``, `` `ABSENT` ``
+- Special time-tick values: `` `SICK LEAVE` ``, `` `HOLIDAY` ``, `` `ABSENT` ``. A leave day carries **no Short-term Goal and no evidence links** — the whole entry is the date heading plus one `**Daily-logs**:` bullet with the marker.
 
 > **Note:** The SOP example uses `HH:MM` colon notation. This tool normalises to `HH.MM` dots.
 > The `.sop-hash` workflow will alert if the SOP section changes.

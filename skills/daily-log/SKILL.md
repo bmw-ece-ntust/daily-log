@@ -155,8 +155,10 @@ show output, confirm, then re-run with the apply flag.
 | Reminder | `main.py --generate-reminder reminder.md --since DATE` | read-only; then show it |
 | Log today / specific day | compose entry, then post | — |
 
-Single-day / sick leave / holiday: `### YYYY/MM/DD` heading, `HH.MM` dot ticks,
-evidence links. Sick leave = `` `SICK LEAVE` ``; holiday = `` `HOLIDAY` ``.
+Single-day working entry: `### YYYY/MM/DD` heading, `HH.MM` dot ticks, evidence
+links. **Leave days carry no goal** — a non-working day is just the date heading
+plus one `**Daily-logs**:` bullet, `` `SICK LEAVE` `` / `` `HOLIDAY` `` /
+`` `ABSENT` ``; omit **Short-term Goal** and every evidence link.
 
 ## Step 4 — Safety
 
