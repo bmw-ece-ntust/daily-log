@@ -1,6 +1,6 @@
 ---
 name: daily-log-commit
-description: Run the BMW Lab daily-log COMMIT step when the user genuinely intends to commit/push (a short "git push" / "commit and push" instruction). Reconciles the 4 project files, commits in SOP work duration format, pushes, and writes a long-term-memory session record. Do NOT trigger when "git push" merely appears inside a longer sentence that is about something else. Trigger: /daily-log-commit
+description: Run the BMW Lab daily-log COMMIT step on genuine commit/push intent (a short "git push" / "commit and push" instruction, never when the phrase appears mid-sentence about something else) — reconcile the 4 project files, commit in SOP work-duration format, push, write the LTM session record. Trigger: /daily-log-commit.
 ---
 
 # /daily-log-commit

@@ -1,6 +1,6 @@
 ---
 name: daily-log
-description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (default bmw-ece-ntust/progress-plan#366) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Trigger: /daily-log
+description: Post BMW Lab daily-log entries to the progress issue (bmw-ece-ntust/progress-plan#366) — commits pending lab repos first, then updates the day's comment in place, seeded from LTM records + commit history (lab orgs only). Also catches up missing weekdays, records leave, and attaches evidence links. Trigger: /daily-log, "post my daily log".
 ---
 
 # /daily-log

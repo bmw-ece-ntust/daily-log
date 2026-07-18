@@ -1,6 +1,6 @@
 ---
 name: daily-log-audit
-description: Full-history audit of the GitHub daily-log (progress-plan#366) — recheck every day from the beginning of the LTM to today against the current SOP format, rewrite non-conforming old entries in place, and fill missing days. Supersedes verify-daily-log (pass --since for the old quick gap-check scope). Token-efficient, conformance is judged by mechanical regex checks on structured data; the LLM only rewrites the days that fail. Trigger: /daily-log-audit
+description: Full-history audit of the GitHub daily-log (progress-plan#366) against the current SOP format — mechanical conformance checks, rewrite failing days in place, fill missing days (pass --since for a quick gap-check). Trigger: /daily-log-audit, "audit / verify / fix my daily log".
 ---
 
 # /daily-log-audit

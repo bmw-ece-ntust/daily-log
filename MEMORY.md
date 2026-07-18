@@ -4,6 +4,23 @@ Dated session log of decisions, patterns, and gotchas. Append-only; never edit p
 
 ---
 
+### 2026/07/18
+
+- **Tightened the four skill-frontmatter `description` fields** (`daily-log`,
+  `daily-log-commit`, `daily-plan`, `daily-log-audit`) — shorter, lead with the trigger
+  phrase and explicit alternate trigger wording ("audit / verify / fix my daily log",
+  "post my daily log", "plan my day"), dropped restated detail that duplicates the body.
+- **`scripts/fetch-auto-daily-log.sh` is now skill-first.** If
+  `~/.claude/skills/daily-log-commit/SKILL.md` is installed, the hook prints a 4-line
+  pointer at it (Step 1: reconcile/commit/push via the skill using the injected session
+  timing; Step 2: run `/daily-log` after the push succeeds) instead of inlining the full
+  SOP prompt. The legacy fetch-SOP-or-local-fallback path is kept as the fallback for
+  machines without the skill installed.
+- **Session-timing gotcha (repeat).** LTM Postgres was unreachable this session (Vault
+  AppRole credentials not found in the local keychain), so the exact session start could
+  not be recalled. Logged with `??:??` start per the SOP's own missing-start convention;
+  end time taken from file mtime (19:13, matches the single day these files were touched).
+
 ### 2026/07/08
 
 - **`scripts/fetch-auto-daily-log.sh` now chains a Step 2 reminder after the Step 1

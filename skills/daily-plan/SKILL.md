@@ -1,6 +1,6 @@
 ---
 name: daily-plan
-description: Post the morning daily-plan for today to the BMW Lab progress issue (default bmw-ece-ntust/progress-plan#366). The user just prompts, in plain words, what they want to do today; this skill turns that into a checklist of measurable targets in the daily-log comment format but without durations. Time ticks are optional at plan time: none (no agenda yet), `hh:mm` (deadline), or `hh:mm - hh:mm` (known duration, e.g. a meeting). Supplements the user's prompt with yesterday's unfinished goals, upcoming targets, today's calendar events, and TODO.md. The evening /daily-log then fills this same comment with actual durations and evidence. Trigger: /daily-plan
+description: Post the morning daily-plan to the BMW Lab progress issue — the user says in plain words what they want to do today, and this turns it into a checklist of measurable targets (no durations yet; the evening /daily-log fills them in). Trigger: /daily-plan, "plan my day", "today I want to ...".
 ---
 
 # /daily-plan

@@ -39,7 +39,23 @@ echo "Session START = first user message timestamp in the transcript that falls 
 echo "======================================="
 echo ""
 
-# --- Fetch latest SOP prompt, fall back to local copy ---
+# --- Skill-first (no duplication): if the daily-log-commit skill is installed, point
+# at it instead of inlining the whole SOP prompt — one canonical workflow, and the
+# per-push injection shrinks from the full SOP section to four lines. The legacy
+# SOP fetch below remains the fallback for machines without the skill.
+if [ -f "$HOME/.claude/skills/daily-log-commit/SKILL.md" ]; then
+    cat <<'SKILLPTR'
+This is genuine commit/push intent. Step 1: run the **daily-log-commit** skill
+(~/.claude/skills/daily-log-commit/SKILL.md) using the SESSION TIMING above —
+reconcile the 4 project files, commit in SOP work-duration format, push, write
+the LTM session record. Step 2 (only after the push succeeds): run the
+**daily-log** skill to post today's entry to the lab progress issue (it
+self-restricts to the lab orgs, so it no-ops elsewhere).
+SKILLPTR
+    exit 0
+fi
+
+# --- Fallback (skill not installed): fetch latest SOP prompt, else local copy ---
 content=""
 if command -v gh &>/dev/null; then
     fetched=$(gh api repos/bmw-ece-ntust/SOP/contents/daily-log.md --jq '.content' 2>/dev/null | base64 -d 2>/dev/null)
