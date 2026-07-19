@@ -89,6 +89,19 @@ Build each day's detail from two sources of truth, then attach evidence.
    ```
    (`session`/`activity` rows supplement days without a worklog; `session.doc_url` is a ready evidence link.)
 
+   **Drain offline spools first (mandatory).** Cowork sessions spool to
+   `llm-skill-ltm/.ltm-spool/cowork.jsonl` and stay invisible to this query until
+   flushed — run `bash "$LTM_HOME/scripts/ltm-sync.sh"` (or at least `ltm-flush.sh`)
+   before querying. `pg-memory-conn.sh` falls back to the cached connection string
+   (`~/.claude/.pg-memory-conn`, then the termlog cache) when Vault is unreachable,
+   so a Vault outage is not a reason to skip the LTM.
+
+   **`??:??` is a last resort, not a shortcut.** A placeholder time may be published
+   only after all three sources fail for that interval: (1) LTM worklogs *after* the
+   spool drain, (2) `termlog.command` windows (`min(ts)`/`max(ts)` per repo per day,
+   converted to Asia/Taipei), (3) calendar events. A time that exists in any of these
+   MUST be used; never post `??:??` when the LTM can supply the value.
+
 2. **GitHub commits** give the concrete deliverable + the SOP evidence link:
 
    ```bash
@@ -102,7 +115,9 @@ Build each day's detail from two sources of truth, then attach evidence.
    target>](doc link) ``, linking the **study-notes documentation** at that commit
    (`.../tree/<7hex>#<section>`, resolved via the tool's `--link-to-files`). Never link
    the bare `/commit/<hash>`. Times come from the **worklog**; if a `start` is missing
-   and no calendar event covers it, write `??:?? - HH.MM` and flag for review.
+   there, take the interval from the day's `termlog.command` window for that repo; only
+   when no worklog, termlog, or calendar source covers it, write `??:?? - HH.MM` and
+   flag for review.
 
    **Wording standard — concise, target-first.** The daily-log states *which target was
    achieved* in each interval; the linked study-notes carry the detail. Rules:
