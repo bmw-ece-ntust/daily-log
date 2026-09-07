@@ -3,6 +3,15 @@ name: daily-log-commit
 description: Run the BMW Lab daily-log COMMIT step on genuine commit/push intent (a short "git push" / "commit and push" instruction, never when the phrase appears mid-sentence about something else) — reconcile the 4 project files, commit in SOP work-duration format, push, write the LTM session record. Trigger: /daily-log-commit.
 ---
 
+## Model — Sonnet 5 for the writing (mandatory)
+
+Same rule as `daily-log`: delegate the composition to the Sonnet-pinned
+`project-analyst` sub-agent (or an `Agent` call with `model: "sonnet"`) and keep the
+confirm-and-post loop in the main session. Claude cannot switch its own session model,
+so delegation is how "run this on Sonnet 5, then carry on as before" is actually done.
+See `skills/daily-log/SKILL.md` for the full statement.
+
+
 # /daily-log-commit
 
 The commit half of the BMW Lab daily-log SOP. (The posting half is `daily-log`.)

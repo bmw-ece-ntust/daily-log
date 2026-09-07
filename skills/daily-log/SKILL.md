@@ -1,6 +1,6 @@
 ---
 name: daily-log
-description: Post BMW Lab daily-log entries to the progress issue (bmw-ece-ntust/progress-plan#366) — commits pending lab repos first, then updates the day's comment in place, seeded from LTM records + commit history (lab orgs only). Also catches up missing weekdays, records leave, and attaches evidence links. Trigger: /daily-log, "post my daily log".
+description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (default bmw-ece-ntust/progress-plan#366) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Trigger: /daily-log
 ---
 
 # /daily-log
@@ -10,6 +10,31 @@ https://github.com/bmw-ece-ntust/daily-log. This skill first **commits & pushes
 all lab repos** (the `daily-log-commit` workflow, per repo), then posts the day's
 entry — updating the existing daily-plan/log comment in place, or creating a new
 one only when none exists.
+
+## Model — Sonnet 5 for the writing, then back (mandatory)
+
+Writing a daily-log is structured-data cross-referencing plus short summary composition:
+a routine-workflow task. Opus or Fable spend several times the tokens on it and do not
+produce a better entry.
+
+**Claude cannot change its own session model mid-session.** No tool, hook, or setting
+does it, so "switch to Sonnet 5 and switch back afterwards" is not literally available
+and any skill that claims to do it is lying. The equivalent that IS available, and is
+REQUIRED here, is delegation:
+
+- Run the token-heavy work — the Step 0 pending-work scan, and the Step 2 cross-reference
+  and entry composition — inside the Sonnet-pinned `project-analyst` sub-agent, or an
+  `Agent` call passing `model: "sonnet"`.
+- Keep the draft -> confirm -> post loop in the MAIN session, so the human confirmation
+  is preserved and nothing reaches the shared issue from a subagent.
+- The session returns to its original model by construction, because it never left it.
+
+This is mandatory, not a cost heuristic, and it applies to a single-day entry too: an
+exception that depends on first judging an entry "trivial" is an exception that never
+fires. If the session is already on Sonnet, do the work inline.
+
+Tell the user once per invocation: *"daily-log composition is delegated to Sonnet 5; this
+session stays on <model>."*
 
 ## Eligible orgs (hard restriction)
 
@@ -96,11 +121,54 @@ Build each day's detail from two sources of truth, then attach evidence.
    (`~/.claude/.pg-memory-conn`, then the termlog cache) when Vault is unreachable,
    so a Vault outage is not a reason to skip the LTM.
 
+   **When the database is unreachable, use STM — it holds the same timestamps.**
+   The worklog rows above are DERIVED from local session transcripts, so a Vault,
+   tunnel, or Postgres outage does not actually destroy the times: they are still on
+   this machine. Read them with no database, no credential, and no network:
+
+   ```bash
+   bash "$LTM_HOME/scripts/stm-window.sh" --since <day>
+   ```
+
+   **Faster STM entry point: check the top-level repo index first.** Scanning every
+   `~/.claude/projects/*/*.jsonl` transcript to find which repos even had activity is
+   wasted work when only the times are missing. `stm-index-ingest.sh` (a Stop/SessionEnd
+   hook) appends one line per (date, owner, repo, machine) to
+   `~/Documents/GitHub/.llm-stm.jsonl` on every session close — a durable, local-only
+   backup independent of Postgres. Read it first to narrow which repos to ask about,
+   then get that repo's exact times from `stm-window.sh`:
+
+   ```bash
+   bash "$LTM_HOME/scripts/llm-stm-index.sh" --since <day>            # which repos
+   bash "$LTM_HOME/scripts/stm-window.sh" --repo <owner>/<repo> --since <day>  # that repo's times
+   ```
+
+   If the index file doesn't exist yet or is missing a day (e.g. a session predating the
+   hook, or a machine where install.sh hasn't run since this was added), fall back to the
+   full `stm-window.sh --since <day>` scan above — it is still the source of truth, the
+   index is only a cache in front of it.
+
+   **A row tagged with an `llm` other than `claude-code` did not happen in this Claude
+   Code install** — it was backed up via `/stm-import` (e.g. ChatGPT, a different
+   Claude.ai account). `stm-window.sh` has no transcript for it and will not find it;
+   use the `start`/`end` printed directly on that index row instead, and attribute the
+   bullet to that `llm`/`account` rather than silently folding it into Claude Code's own
+   activity for the day.
+
+   It prints `date, repo, branch, start, end, sessions, sources` — the same shape the
+   query above returns — from `~/.claude/projects` transcripts plus every un-flushed
+   spool (Cowork, Codex, and this machine's offline queue). An end marked `+1d` ran past
+   midnight; `--sessions` gives per-session rows and `--json` machine-readable output.
+   Prefer the LTM when it answers, and treat STM as the next rung, never as a shortcut
+   past a drain that would have worked.
+
    **`??:??` is a last resort, not a shortcut.** A placeholder time may be published
-   only after all three sources fail for that interval: (1) LTM worklogs *after* the
-   spool drain, (2) `termlog.command` windows (`min(ts)`/`max(ts)` per repo per day,
-   converted to Asia/Taipei), (3) calendar events. A time that exists in any of these
-   MUST be used; never post `??:??` when the LTM can supply the value.
+   only after all four sources fail for that interval: (1) LTM worklogs *after* the
+   spool drain, (2) STM windows from `stm-window.sh`, (3) `termlog.command` windows
+   (`min(ts)`/`max(ts)` per repo per day, converted to Asia/Taipei), (4) calendar
+   events. A time that exists in any of these MUST be used; never post `??:??` when the
+   LTM or STM can supply the value — a database outage is not a source failure,
+   because STM is read without the database.
 
 2. **GitHub commits** give the concrete deliverable + the SOP evidence link:
 
@@ -115,9 +183,9 @@ Build each day's detail from two sources of truth, then attach evidence.
    target>](doc link) ``, linking the **study-notes documentation** at that commit
    (`.../tree/<7hex>#<section>`, resolved via the tool's `--link-to-files`). Never link
    the bare `/commit/<hash>`. Times come from the **worklog**; if a `start` is missing
-   there, take the interval from the day's `termlog.command` window for that repo; only
-   when no worklog, termlog, or calendar source covers it, write `??:?? - HH.MM` and
-   flag for review.
+   there, take the interval from `stm-window.sh`, then from the day's `termlog.command`
+   window for that repo; only when no worklog, STM window, termlog, or calendar source
+   covers it, write `??:?? - HH.MM` and flag for review.
 
    **Wording standard — concise, target-first.** The daily-log states *which target was
    achieved* in each interval; the linked study-notes carry the detail. Rules:
@@ -170,10 +238,8 @@ show output, confirm, then re-run with the apply flag.
 | Reminder | `main.py --generate-reminder reminder.md --since DATE` | read-only; then show it |
 | Log today / specific day | compose entry, then post | — |
 
-Single-day working entry: `### YYYY/MM/DD` heading, `HH.MM` dot ticks, evidence
-links. **Leave days carry no goal** — a non-working day is just the date heading
-plus one `**Daily-logs**:` bullet, `` `SICK LEAVE` `` / `` `HOLIDAY` `` /
-`` `ABSENT` ``; omit **Short-term Goal** and every evidence link.
+Single-day / sick leave / holiday: `### YYYY/MM/DD` heading, `HH.MM` dot ticks,
+evidence links. Sick leave = `` `SICK LEAVE` ``; holiday = `` `HOLIDAY` ``.
 
 ## Step 4 — Safety
 

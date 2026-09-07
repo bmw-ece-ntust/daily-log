@@ -4,6 +4,28 @@ Dated session log of decisions, patterns, and gotchas. Append-only; never edit p
 
 ---
 
+### 2026/09/08 — "Batch GitHub writes, and pin daily-log composition to Sonnet 5"
+
+**Duration**: 2026/09/08_01:20 - 02:14 (0.9h)
+
+**Summary**: Backfilling 14 missing days meant 14 REST round trips, because the REST API
+has no bulk comment endpoint: slow, rate-limit-hungry, and non-atomic, so a failure
+halfway leaves the issue half-updated with no record of where it stopped. New
+`scripts/gh-batch-comments.sh` puts every create and edit into ONE GraphQL document using
+aliased `addComment`/`updateIssueComment` mutations, resolves node ids up front, and
+escapes bodies with `json.dumps` (GraphQL and JSON share the escaping rules, and
+daily-log bodies are full of quotes, newlines and emoji). `--dry-run` prints the document
+before anything is sent. Used it to correct three entries in one request. Also pinned
+daily-log composition to Sonnet 5: Claude cannot change its own session model
+mid-session, so the rule is stated as delegation to the Sonnet-pinned `project-analyst`
+sub-agent with the draft/confirm/post loop kept in the main session — the session returns
+to its original model because it never left it. Made mandatory rather than advisory,
+since the old wording let a "trivial single-day entry" be composed inline and that
+exception never failed to apply. Found that the repo's skill sources had drifted behind
+the installed `~/.claude/skills/` copies, so a reinstall would have reverted the model
+section; resynced.
+
+
 ### 2026/07/18
 
 - **Tightened the four skill-frontmatter `description` fields** (`daily-log`,

@@ -3,6 +3,15 @@ name: daily-log-audit
 description: Full-history audit of the GitHub daily-log (progress-plan#366) against the current SOP format — mechanical conformance checks, rewrite failing days in place, fill missing days (pass --since for a quick gap-check). Trigger: /daily-log-audit, "audit / verify / fix my daily log".
 ---
 
+## Model — Sonnet 5 for the writing (mandatory)
+
+Same rule as `daily-log`: delegate the composition to the Sonnet-pinned
+`project-analyst` sub-agent (or an `Agent` call with `model: "sonnet"`) and keep the
+confirm-and-post loop in the main session. Claude cannot switch its own session model,
+so delegation is how "run this on Sonnet 5, then carry on as before" is actually done.
+See `skills/daily-log/SKILL.md` for the full statement.
+
+
 # /daily-log-audit
 
 Audits the **entire daily-log history** against the current SOP

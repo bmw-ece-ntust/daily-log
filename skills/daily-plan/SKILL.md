@@ -3,6 +3,15 @@ name: daily-plan
 description: Post the morning daily-plan to the BMW Lab progress issue — the user says in plain words what they want to do today, and this turns it into a checklist of measurable targets (no durations yet; the evening /daily-log fills them in). Trigger: /daily-plan, "plan my day", "today I want to ...".
 ---
 
+## Model — Sonnet 5 for the writing (mandatory)
+
+Same rule as `daily-log`: delegate the composition to the Sonnet-pinned
+`project-analyst` sub-agent (or an `Agent` call with `model: "sonnet"`) and keep the
+confirm-and-post loop in the main session. Claude cannot switch its own session model,
+so delegation is how "run this on Sonnet 5, then carry on as before" is actually done.
+See `skills/daily-log/SKILL.md` for the full statement.
+
+
 # /daily-plan
 
 Post today's **plan** as the day's comment bubble on the lab progress issue —
