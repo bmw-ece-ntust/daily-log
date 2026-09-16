@@ -4,6 +4,22 @@ Dated session log of decisions, patterns, and gotchas. Append-only; never edit p
 
 ---
 
+### 2026/09/15 — [this commit] "Write down the daily-log day boundary"
+
+**Duration**:
+- 2026/09/15_17:30 - 17:45 (0.3h): added the clock-day rule to the daily-log skill and the matching conformance check to daily-log-audit.
+
+**Summary**: The day boundary was assumed but never stated, so a session running past
+midnight had no defined home and could be published as one bullet whose end time preceded
+its start. The rule is now explicit: a daily-log day is the clock day in Asia/Taipei,
+`00.00` to `23.59`; work crossing midnight is **split at midnight**, the earlier part
+staying on the day it started and the remainder becoming the next day's first bullet.
+`stm-window.sh`'s `+1d` end marker is named as the signal to split rather than a value to
+publish. `daily-log-audit` gained the matching check — an end before its start, a `24.xx`
+tick, or a missing after-midnight remainder — so past days get caught and rewritten. The
+rule was exercised the same day: a 2026/09/14 session ran to 00:14, and its tail was logged
+as 2026/09/15's first bullet.
+
 ### 2026/09/08 — "Batch GitHub writes, and pin daily-log composition to Sonnet 5"
 
 **Duration**: 2026/09/08_01:20 - 02:14 (0.9h)

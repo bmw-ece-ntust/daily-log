@@ -24,6 +24,18 @@ changes, or to bring the whole log to one consistent standard.
 Lab orgs only (`bmw-ece-ntust`, `bmw-ntust-internship`, `raycg`).
 Issue: `bmw-ece-ntust/progress-plan#366`. Timezone: Asia/Taipei (GMT+8).
 
+## Day boundary (conformance check)
+
+Every interval must sit inside its own comment's calendar day, `00.00` – `23.59`
+(Asia/Taipei). Flag and rewrite:
+
+- an end time earlier than its start (a session carried across midnight in one bullet),
+- any tick of `24.xx` or later,
+- a session whose after-midnight remainder is missing from the next day's comment.
+
+The fix is to split the interval at midnight and move the remainder to the next day as
+that day's first bullet. See the day-boundary section of the `daily-log` skill.
+
 ## Scope
 
 - **Default (full audit)**: from the **beginning of the LTM** to today. The epoch is

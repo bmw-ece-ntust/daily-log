@@ -45,6 +45,32 @@ exactly these three.
 
 Default target issue: `bmw-ece-ntust/progress-plan#366`. Auth: `gh` CLI.
 
+## The day boundary is the clock, 00.00 – 23.59 (hard rule)
+
+A daily-log day is the **calendar day in Asia/Taipei**, from `00.00` to `23.59`. It is
+not "the working session", and it does not stretch to wherever the work happened to stop.
+
+**A session that runs past midnight is split at midnight, not carried.** The part before
+`24.00` is logged on the day it started; the part from `00.00` onward is logged on the
+**next** day, as that day's first bullet. So a session from `21.50` to `00.14` produces
+two bullets on two comments:
+
+```markdown
+### 2026/09/14
+- `21.50 - 23.59` [owner/repo]: <what was done>
+
+### 2026/09/15
+- `00.00 - 00.14` [owner/repo]: <the continuation>
+```
+
+Never write an end time smaller than the start time, never write `24.30` or `25.00`, and
+never leave the after-midnight part off the next day because it looks like a fragment.
+The `+1d` end marker that `stm-window.sh` prints means exactly this split is needed — it
+is a signal to the composer, not a value to publish.
+
+The same rule decides which comment an interval belongs to when catching up several days
+at once: sort by the interval's **start** clock time within its own calendar day.
+
 ## Step 0 — Commit & push all lab repos (daily-log-commit sweep)
 
 Before posting, ensure every lab-related local repo has its work committed and
