@@ -17,35 +17,35 @@ Copy any prompt below and paste it into Claude Code. Replace `<date>` with a rea
 
 ### Recap & full catch-up since a date
 
-> Check my daily-log (bmw-ece-ntust/progress-plan#366) since `<date>` until today.
+> Check my daily-log (bmw-ece-ntust/progress-plan#<your-daily-log-issue>) since `<date>` until today.
 > For every missing weekday: first look for GitHub commits in the bmw-ece-ntust org (`env.yaml` config), then check my Google Calendar via the iCal URL in `env.local.yaml`. Create a new daily-log comment for each missing day that has activity, seed it with the events found. Then reorder all dated comments chronologically using `reorder-comments.py --apply`. Finally, generate `reminder.md` listing remaining missing days and any bullets without evidence links.
 
 ---
 
 ### Fill missing entries from GitHub commits only
 
-> Check my daily-log (bmw-ece-ntust/progress-plan#366) since `<date>` until today.
+> Check my daily-log (bmw-ece-ntust/progress-plan#<your-daily-log-issue>) since `<date>` until today.
 > Run `python main.py --since <date> --ensure-comments --seed-from-commits --skip-if-no-activity --apply` (dry-run first, then apply after confirming). Only create entries for days that actually have commits — skip empty stubs.
 
 ---
 
 ### Fill missing entries from Google Calendar only
 
-> Check my daily-log (bmw-ece-ntust/progress-plan#366) since `<date>` until today.
+> Check my daily-log (bmw-ece-ntust/progress-plan#<your-daily-log-issue>) since `<date>` until today.
 > Run `python fill-from-calendar.py --since <date>` (reads iCal URL from `env.local.yaml`) to show missing days with calendar events. Then run with `--create` to post them.
 
 ---
 
 ### Reorder all comments chronologically
 
-> Reorder all dated comments in bmw-ece-ntust/progress-plan#366 into chronological order.
+> Reorder all dated comments in bmw-ece-ntust/progress-plan#<your-daily-log-issue> into chronological order.
 > Run `python reorder-comments.py --since <date> --until today` to preview, then `--apply` to delete and recreate them in sorted order. Confirm before applying — this posts ~200+ comments.
 
 ---
 
 ### Log today (or a specific day)
 
-> Add a daily-log entry to bmw-ece-ntust/progress-plan#366 for `<date>`.
+> Add a daily-log entry to bmw-ece-ntust/progress-plan#<your-daily-log-issue> for `<date>`.
 > The entry should include: [describe what you did — commits, meetings, tasks].
 > Use `### YYYY/MM/DD` heading, `HH.MM` dot-notation time ticks, evidence links where available.
 
@@ -53,7 +53,7 @@ Copy any prompt below and paste it into Claude Code. Replace `<date>` with a rea
 
 ### Log a sick leave or holiday
 
-> Add a sick leave entry to bmw-ece-ntust/progress-plan#366 for `<date>`.
+> Add a sick leave entry to bmw-ece-ntust/progress-plan#<your-daily-log-issue> for `<date>`.
 > Format: `### YYYY/MM/DD` heading, then under `**Daily-logs**:` a single bullet: `` - `SICK LEAVE` ``.
 > For a public holiday use `` `HOLIDAY` `` instead.
 
@@ -61,7 +61,7 @@ Copy any prompt below and paste it into Claude Code. Replace `<date>` with a rea
 
 ### Generate reminder (missing days + missing evidence)
 
-> Generate `reminder.md` for bmw-ece-ntust/progress-plan#366 covering `<date>` to today.
+> Generate `reminder.md` for bmw-ece-ntust/progress-plan#<your-daily-log-issue> covering `<date>` to today.
 > Run `python main.py --generate-reminder reminder.md --since <date>`.
 > Then show me the contents — I want to see which days are missing and which bullets have no evidence link.
 

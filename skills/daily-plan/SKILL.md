@@ -25,7 +25,7 @@ same comment in place, converting achieved targets into duration bullets with
 evidence links.
 
 Lab orgs only (`bmw-ece-ntust`, `bmw-ntust-internship`, `raycg`).
-Default target issue: `bmw-ece-ntust/progress-plan#366`. Auth: `gh` CLI.
+Target issue: your own daily-log issue (`PREFS_DAILYLOG_ISSUE` in `~/.claude/identity.sh`; Ian's is `bmw-ece-ntust/progress-plan#366`). Auth: `gh` CLI.
 Timezone: Asia/Taipei (GMT+8).
 
 ## Format
@@ -99,8 +99,19 @@ starting point and let them pick.
    surface these as roll-forward candidates.
 2. **Today's calendar events** (meetings) → `` `hh:mm - hh:mm` `` items. Pull via
    `fill-from-calendar.py` in `$DAILY_LOG_HOME` (needs `env.local.yaml`); skip
-   silently if not configured.
+   silently if not configured. Events tagged `action-sync:` are execution-plan
+   blocks, not meetings; the script leaves them out.
 3. **`TODO.md` → Now** items of the repo(s) the user mentioned.
+4. **The execution plan** (the `Execution Plan` comment in the Thesis Discussion
+   issue): today's row of the Weekly plan, plus the next items of the pull-forward
+   queue.
+
+**A priority change is a re-plan.** When what the user says today reorders the
+plan (for example, "finish the related-work part first today"), post the day's plan
+as usual, then run **`/action-sync` Step 6**. It re-sorts the queue, re-fits the days
+within capacity, and moves the deadlines. A pending item keeps its missed date struck
+through; a future item's date is just replaced. It shows the diff and, on a yes,
+moves the Google Calendar events to match.
 
 ## Step 3 — Confirm, then post
 
@@ -126,4 +137,4 @@ second comment for a day that already has one.
 ## Reference
 
 - SOP: https://github.com/bmw-ece-ntust/SOP/blob/master/daily-log.md#writing-daily-plan-morning
-- Default issue: bmw-ece-ntust/progress-plan#366
+- Issue: the member's own, `PREFS_DAILYLOG_ISSUE` (Ian's: bmw-ece-ntust/progress-plan#366)

@@ -8,9 +8,9 @@ references this repo, it no longer carries these skills.
 
 | Skill | Scope | Trigger | Brief |
 | --- | --- | --- | --- |
-| `daily-plan` | global | `/daily-plan` | Post the morning plan for today to `progress-plan#366`: a checklist of measurable targets (time ticks optional — none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening log fills the same comment. |
+| `daily-plan` | global | `/daily-plan` | Post the morning plan for today to your own daily-log issue: a checklist of measurable targets (time ticks optional — none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening log fills the same comment. |
 | `daily-log-commit` | global | `/daily-log-commit` (auto on real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
-| `daily-log` | global | `/daily-log` | Sweep all lab repos with the `daily-log-commit` workflow (commit + push pending work), then post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
+| `daily-log` | global | `/daily-log` | Sweep all lab repos with the `daily-log-commit` workflow (commit + push pending work), then post entries to your own daily-log issue from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
 | `daily-log-audit` | global | `/daily-log-audit` | Full-history audit: recheck every day against the current SOP format, rewrite non-conforming entries, fill missing days (supersedes `verify-daily-log`; pass `--since <date>` for the old quick gap-check scope). Token-efficient. |
 
 ## Layout
@@ -26,4 +26,4 @@ install.sh wires skills + hook + DAILY_LOG_HOME + tool venv
 
 - `gh` CLI authenticated as your GitHub account.
 - For `audit`/`auto`: LTM worklogs from `bmw-ece-ntust/llm-skill-ltm` (installed separately).
-- Lab orgs only: `bmw-ece-ntust`, `bmw-ntust-internship`, `raycg`. Issue: `progress-plan#366`.
+- Lab orgs only: `bmw-ece-ntust`, `bmw-ntust-internship`, `raycg`. Issue: each member's own (`PREFS_DAILYLOG_ISSUE`; Ian's is `#366`).

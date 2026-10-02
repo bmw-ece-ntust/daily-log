@@ -98,6 +98,17 @@ def _require(d: dict[str, Any], key: str) -> Any:
     return d[key]
 
 
+def _issue_number(gh: dict[str, Any]) -> int:
+    """The member's OWN daily-log issue. Empty in the example config on purpose."""
+    raw = _require(gh, "issue_number")
+    if raw in (None, "") or int(raw) <= 0:
+        raise ValueError(
+            "github.issue_number is empty: set it to your own daily-log issue in "
+            "bmw-ece-ntust/progress-plan (each student has one), not someone else's."
+        )
+    return int(raw)
+
+
 def load_config(path: str | Path) -> AppConfig:
     p = Path(path)
     data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
@@ -127,7 +138,7 @@ def load_config(path: str | Path) -> AppConfig:
         contribution_sources=sources_cfg,
         repo_owner=str(_require(gh, "repo_owner")),
         repo_name=str(_require(gh, "repo_name")),
-        issue_number=int(_require(gh, "issue_number")),
+        issue_number=_issue_number(gh),
         timezone=str(gh.get("timezone") or "Asia/Taipei"),
         seed_new_day_from_commits=bool(gh.get("seed_new_day_from_commits") or False),
         append_unmatched_commits=bool(

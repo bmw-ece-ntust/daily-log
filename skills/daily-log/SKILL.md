@@ -1,6 +1,6 @@
 ---
 name: daily-log
-description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (default bmw-ece-ntust/progress-plan#366) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Trigger: /daily-log
+description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (the member's own, PREFS_DAILYLOG_ISSUE) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Trigger: /daily-log
 ---
 
 # /daily-log
@@ -43,7 +43,7 @@ Only repos under **`bmw-ece-ntust`**, **`bmw-ntust-internship`**, and **`raycg`*
 Ignore activity in any other org/account. Set `env.yaml`'s configured orgs to
 exactly these three.
 
-Default target issue: `bmw-ece-ntust/progress-plan#366`. Auth: `gh` CLI.
+Target issue: your own daily-log issue (`PREFS_DAILYLOG_ISSUE` in `~/.claude/identity.sh`; Ian's is `bmw-ece-ntust/progress-plan#366`). Auth: `gh` CLI.
 
 ## The day boundary is the clock, 00.00 – 23.59 (hard rule)
 
@@ -278,4 +278,4 @@ evidence).
 
 - Tool: https://github.com/bmw-ece-ntust/daily-log
 - SOP: https://github.com/bmw-ece-ntust/SOP/blob/master/daily-log.md#auto-daily-log
-- Default issue: bmw-ece-ntust/progress-plan#366
+- Issue: the member's own, `PREFS_DAILYLOG_ISSUE` (Ian's: bmw-ece-ntust/progress-plan#366)

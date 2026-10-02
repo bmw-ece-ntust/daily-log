@@ -156,6 +156,7 @@ def parse_events(raw: bytes) -> list[dict]:
             "end": end_dt,
             "date": start_dt.date(),
             "location": str(component.get("LOCATION") or "").strip(),
+            "description": str(component.get("DESCRIPTION") or ""),
         })
 
     return events
@@ -166,7 +167,11 @@ def filter_work_events(events: list[dict], exclude_kw: list[str]) -> tuple[list[
     work, excluded = [], []
     for ev in events:
         title_lower = ev["summary"].lower()
-        if any(kw in title_lower for kw in exclude_kw):
+        # Execution-plan blocks written by /action-sync are planned work, not meetings:
+        # the daily-log takes their times from the worklog, never from the calendar.
+        if "action-sync:" in ev.get("description", ""):
+            excluded.append(ev)
+        elif any(kw in title_lower for kw in exclude_kw):
             excluded.append(ev)
         else:
             work.append(ev)
@@ -243,6 +248,7 @@ def fetch_via_oauth(calendar_id: str, since: date, until: date) -> list[dict]:
                 "end": datetime.combine(d, datetime.min.time(), tzinfo=TAIPEI_TZ),
                 "date": d,
                 "location": (ev.get("location") or "").strip(),
+                "description": ev.get("description") or "",
             })
     return out
 

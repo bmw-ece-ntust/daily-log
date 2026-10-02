@@ -124,3 +124,8 @@ section; resynced.
   evidence, with hour-grouped `HH.MM - HH.MM: <activity>` bullets under it; `??:?? - HH.MM`
   for an unknown start; calendar-meeting-without-minutes placeholder. Added graphify-first
   as step 0 of `daily-log-commit`. Recomputed `.sop-hash` (`b2b3a1bd018495ab`).
+
+### 2026/10/02 — [HASHPLH] "Hook Step 3 (action-sync) into git push; make the daily-log issue per student"
+**Duration**:
+- 2026/10/02_08:17 - 09:43 (1.4h): added the action-sync Step 3 to the push hook, kept plan events out of the calendar importer, removed the hardcoded issue 366 from the example config, config loader, skills and README
+**Summary**: Wired `/action-sync` (built in llm-core) into the push flow as Step 3 of `fetch-auto-daily-log.sh`, printed only when the skill is installed. Because action-sync writes execution-plan blocks into Google Calendar, `fill-from-calendar.py` now carries each event's description and drops events tagged `action-sync:`, so planned blocks are never logged as meetings. `/daily-plan` now reads the execution plan as a source of today's targets and hands a priority change to `/action-sync` Step 6. Decision: the daily-log issue is per student. `env.example.yaml` no longer ships Ian's issue 366, and `load_config` raises a clear error on an empty `issue_number`, so a copied example fails loudly instead of posting into another student's log. Gotcha: this makes every existing copy of the example config invalid until the owner fills in the issue number; `env.yaml` files already in use are unaffected.

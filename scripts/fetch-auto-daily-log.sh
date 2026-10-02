@@ -39,6 +39,23 @@ echo "Session START = first user message timestamp in the transcript that falls 
 echo "======================================="
 echo ""
 
+# --- Step 3: the planning loop. After the daily-log is posted, /action-sync ticks the
+# action items the pushed commits complete (thesis minutes, execution plan, daily-log
+# pending items, the member's own BiWeekly lines), mirrors the execution plan into
+# Google Calendar, and reports what is open plus the time check. Only when the skill
+# is installed; it self-restricts to the lab orgs like Step 2.
+# Canonical: SOP daily-log.md#step-3--sync-the-action-items-and-the-plan
+step3_action_sync() {
+    [ -f "$HOME/.claude/skills/action-sync/SKILL.md" ] || return 0
+    cat <<'STEP3'
+Step 3 (only after Step 2): run the **action-sync** skill
+(~/.claude/skills/action-sync/SKILL.md) — tick the action items these commits
+complete, with 7-digit-hash evidence links; sync the execution plan to Google
+Calendar; then report every open item by deadline and the time check (buffer,
+and when to work extra). Never create a branch, worktree, or repository.
+STEP3
+}
+
 # --- Skill-first (no duplication): if the daily-log-commit skill is installed, point
 # at it instead of inlining the whole SOP prompt — one canonical workflow, and the
 # per-push injection shrinks from the full SOP section to four lines. The legacy
@@ -52,6 +69,7 @@ the LTM session record. Step 2 (only after the push succeeds): run the
 **daily-log** skill to post today's entry to the lab progress issue (it
 self-restricts to the lab orgs, so it no-ops elsewhere).
 SKILLPTR
+    step3_action_sync
     exit 0
 fi
 
@@ -95,10 +113,12 @@ cat <<'STEP2'
 
 The block above was **Step 1** — it wrote the repo (reconcile, commit, push).
 Now run **Step 2**: invoke the **`/daily-log`** skill to post today's entry to the
-lab progress issue (`bmw-ece-ntust/progress-plan#366`). The skill seeds from the
+member's own daily-log issue (`PREFS_DAILYLOG_ISSUE`). The skill seeds from the
 LTM + commit history, edits the day's existing daily-plan/daily-log comment in
 place (creating one only if none exists), catches up any missing weekdays, and
 attaches evidence links. It self-restricts to the lab orgs (`bmw-ece-ntust`,
 `bmw-ntust-internship`, `raycg`), so it is a no-op on non-lab repos. Do this only
 after Step 1's push has succeeded.
 STEP2
+echo ""
+step3_action_sync

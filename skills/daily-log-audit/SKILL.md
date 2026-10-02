@@ -1,6 +1,6 @@
 ---
 name: daily-log-audit
-description: Full-history audit of the GitHub daily-log (progress-plan#366) against the current SOP format — mechanical conformance checks, rewrite failing days in place, fill missing days (pass --since for a quick gap-check). Trigger: /daily-log-audit, "audit / verify / fix my daily log".
+description: Full-history audit of the GitHub daily-log (the member's own issue, PREFS_DAILYLOG_ISSUE) against the current SOP format — mechanical conformance checks, rewrite failing days in place, fill missing days (pass --since for a quick gap-check). Trigger: /daily-log-audit, "audit / verify / fix my daily log".
 ---
 
 ## Model — Sonnet 5 for the writing (mandatory)
@@ -22,7 +22,7 @@ this skill also *re-formats what already exists* — run it after the SOP format
 changes, or to bring the whole log to one consistent standard.
 
 Lab orgs only (`bmw-ece-ntust`, `bmw-ntust-internship`, `raycg`).
-Issue: `bmw-ece-ntust/progress-plan#366`. Timezone: Asia/Taipei (GMT+8).
+Issue: your own daily-log issue (`PREFS_DAILYLOG_ISSUE` in `~/.claude/identity.sh`; Ian's is `bmw-ece-ntust/progress-plan#366`). Timezone: Asia/Taipei (GMT+8).
 
 ## Day boundary (conformance check)
 
@@ -64,7 +64,7 @@ not the length of the history.
 - **All day comments, one fetch** (paginate; cache to a scratch file):
 
   ```bash
-  gh api "repos/bmw-ece-ntust/progress-plan/issues/366/comments" --paginate \
+  gh api "repos/bmw-ece-ntust/progress-plan/issues/${PREFS_DAILYLOG_ISSUE##*#}/comments" --paginate \
     --jq '.[] | {id: .id, url: .html_url, body: .body}'
   ```
 
