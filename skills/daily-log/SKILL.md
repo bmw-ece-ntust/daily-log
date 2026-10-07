@@ -1,6 +1,6 @@
 ---
 name: daily-log
-description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (the member's own, PREFS_DAILYLOG_ISSUE) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Trigger: /daily-log
+description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (the member's own, PREFS_DAILYLOG_ISSUE) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Keeps a member-written day comment verbatim and appends a Daily-Log section; every bullet names an outcome and links its line range at the 7-digit hash; previews the diff and checks updated_at before each write. On request, produces the LINE "Daily Progress" report first, before any plan or minutes change. Trigger: /daily-log
 ---
 
 # /daily-log
@@ -213,6 +213,14 @@ Build each day's detail from two sources of truth, then attach evidence.
    window for that repo; only when no worklog, STM window, termlog, or calendar source
    covers it, write `??:?? - HH.MM` and flag for review.
 
+   **Never turn the user's words into a clock time.** "After lunch", "this afternoon" or
+   "in the morning" are not times. Run `stm-window.sh --repo <owner>/<repo> --since <day>
+   --sessions` *before* drafting: on 2026/10/07, "started after lunch" was first drafted as
+   `13.00`, and the transcript said `14.16`. A time the user states outright ("from 15.00")
+   wins over STM. Clock times the user gave no source for, such as the bounds of a
+   partial sick leave, are allowed in the draft only if the preview marks them as guessed
+   (see *Partial sick leave* below).
+
    **Wording standard — concise, target-first.** The daily-log states *which target was
    achieved* in each interval; the linked study-notes carry the detail. Rules:
    - One line per interval: verb-first, past tense, **≤ 12 words** before the link
@@ -230,13 +238,57 @@ Build each day's detail from two sources of truth, then attach evidence.
      **merge consecutive same-`[owner/repo]` intervals** into one bullet with an
      extended end time (the LTM keeps the detail; the daily-log is the summary).
 
+   **Each bullet is an outcome, and its link opens that outcome.** The bullet text names
+   the result as it appears in the work, not the activity: a paper section, paragraph,
+   table or figure (`Sec. I-B Contributions: RA-UORA and the burst problem first, then
+   the three contributions`), not `Worked on the introduction`. The link is pinned to the
+   7-digit hash and lands on the result. For a `.md` file, that is the section anchor.
+   For `.tex` and code, it is the changed line range:
+   `https://github.com/<owner>/<repo>/blob/<7hex>/main.tex#L106-L126`. Read the range from
+   the committed file (`grep -n` the `\subsection` / `\end{...}` bounds), not from the diff.
+   The same rule applies to the pending items and the report summary.
+
+   **Match the format of the latest comment on the issue.** Before you compose, read the
+   member's most recent day comment and copy its section names and bullet shape. The
+   template above is only a fallback. Ian's issue (#366) uses
+   ``- [x] `hh.mm - hh.mm` : [outcome](link)`` under a `**Daily-Log**:` heading.
+
+   **Partial sick leave** is its own bullet, placed before the work bullets:
+   ``- `09.00 - 12.00` : `SICK LEAVE` — <reason in the user's words>``. If the user did not
+   give the bounds, take the start from the daily-plan's normal start and the end from the
+   first STM session, and mark both as guessed in the preview.
+
+   **Pending items** stay unchecked and name where the work went:
+   `- [ ] <target outcome> — pending: moved to <mm/dd>`. If a reason is short and the user
+   gave it, add it (`sick this morning`). Never tick an item the commits do not show.
+
    LTM-only intervals (no commit) are still logged, flagged as lacking documentation
    evidence; commit-only days are seeded by the tool. A Google Calendar meeting with no
    minutes yet is `[<meeting-title>](minutes documentation header link with 7-digit
    hash)` (placeholder), flagged for review.
 
 4. **Update in place; create only if none.** Look up the day's existing comment
-   on the issue (match the `### yyyy/mm/dd` heading) before posting:
+   on the issue before posting. **Match the date, not the heading.** The member may
+   have opened the day with `# 2026/10/07` (10/07) as well as `### 2026/10/07`, and a
+   heading-only match created a duplicate 09/29 comment. Search every page for the date
+   string in the first line, at any heading level, and count the matches. Count the ids
+   with `wc -l`, not `--jq` length: `--paginate` runs the jq filter once per page.
+
+   ```bash
+   gh api "repos/<owner>/<repo>/issues/<n>/comments?per_page=100" --paginate \
+     --jq '.[] | select(.body | split("\n")[0] | test("2026/10/07")) | "\(.id) \(.user.login) \(.updated_at)"'
+   ```
+
+   Zero matches means create. One means update. Two or more means stop and ask the user.
+
+   **A comment the member wrote is theirs.** If the day's comment holds the member's own
+   text (`**Action Items**:`, notes, a plan), keep every line of it verbatim. There are
+   only two kinds of change:
+   - append the `**Daily-Log**:` section under their text;
+   - append ` ([<7hex>](link))` to an item they already ticked and that a commit proves.
+
+   Never reword, reorder, re-tick or untick their lines. Never "fix" their typos. The
+   cases below apply to comments this tool created:
    - **Daily-plan comment exists** (posted in the morning via the `daily-plan`
      skill — targets as `- [ ]` checklist items with optional time ticks):
      **edit that comment in place** — convert each achieved target into its
@@ -264,8 +316,10 @@ show output, confirm, then re-run with the apply flag.
 | Reminder | `main.py --generate-reminder reminder.md --since DATE` | read-only; then show it |
 | Log today / specific day | compose entry, then post | — |
 
-Single-day / sick leave / holiday: `### YYYY/MM/DD` heading, `HH.MM` dot ticks,
-evidence links. Sick leave = `` `SICK LEAVE` ``; holiday = `` `HOLIDAY` ``.
+Single-day / sick leave / holiday: `### YYYY/MM/DD` heading for a new comment (keep the
+member's own heading on an existing one), `HH.MM` dot ticks, evidence links. Sick leave =
+`` `SICK LEAVE` ``; holiday = `` `HOLIDAY` ``. A part-day sick leave is a timed bullet;
+see *Partial sick leave* in Step 2.
 
 ## Step 4 — Safety
 
@@ -273,6 +327,61 @@ Default to dry-run; never `--apply`/`--create` until the user has seen the dry-r
 and confirmed. Reorder deletes+recreates 200+ comments — require explicit
 confirmation. After applying, show `reminder.md` (remaining gaps, bullets missing
 evidence).
+
+**A hand-composed entry follows the same rule.** For an entry composed in the session
+rather than by `main.py`:
+
+1. **Preview.** Show the exact change in chat as a `diff` against the live comment, and
+   wait for a yes. A summary of the change is not a preview.
+2. **Edit precisely.** Build the new body from the freshly fetched one with targeted,
+   unique edits (a Python `str.replace` that asserts exactly one match). Never use a
+   global `sed`: one overwrote six historical `[this commit]` placeholders.
+3. **Check for edits made meanwhile.** Read `updated_at` while drafting. Read it again
+   just before writing, and write only if it has not changed. The member and other
+   sessions edit these comments during the day.
+4. **Write the body from a file.**
+   `gh api --method PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<file>`.
+   Use `-F`, never `-f`: `-f body=@file` once posted the literal path as the comment.
+   Print the returned `html_url`.
+
+**Scope: this skill writes the daily-log issue only.** Ticks and moved deadlines in
+the Thesis Discussion minutes and execution plan (#489), and in the member's own section
+of the weekly meeting minutes (#479), belong to `/action-sync`. Run it after the daily-log
+and the report, and preview each of its changes the same way.
+
+## Step 5 — Daily report for the lab chat
+
+When the member asks for "the report", or shares last time's LINE message, produce it
+**first**: before any change to the plan, minutes or weekly comment. Commit, push and
+the daily-log post come before it only so that its links resolve.
+
+The format is fixed. Copy last time's message if the member pasted it.
+
+```
+yyyy/mm/dd: Daily Progress
+
+<html_url of the day's daily-log comment>
+
+Summary:
+1. <outcome, as in the daily-log, ≤ 15 words>
+2. <pending target>: pending (<reason in the member's words>)
+
+Results:
+<results link>
+```
+
+- **Summary.** One numbered line per daily-log outcome, in the member's naming. Ian
+  writes `Sec. 1.1` / `Sec. 1.2`. A pending item states only the reason the member gave;
+  never invent one.
+- **Results.** For a paper project, use the Overleaf project URL recorded in the repo
+  (`CLAUDE.md` / `CONTEXT.md`; Clare: `https://www.overleaf.com/project/64aa34563a0435de5b24ae6b`).
+  Otherwise, use the main evidence link.
+- **Overleaf check.** Overleaf shows only what it has pulled. After a push, tell the
+  member to run *Menu → GitHub → Pull GitHub changes* before sending. If the work is
+  still uncommitted, say so: the link would show yesterday's text.
+
+Give the message as a single fenced block, ready to paste. **Do not send it anywhere.**
+The member posts it.
 
 ## Reference
 

@@ -10,7 +10,7 @@ references this repo, it no longer carries these skills.
 | --- | --- | --- | --- |
 | `daily-plan` | global | `/daily-plan` | Post the morning plan for today to your own daily-log issue: a checklist of measurable targets (time ticks optional — none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening log fills the same comment. |
 | `daily-log-commit` | global | `/daily-log-commit` (auto on real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
-| `daily-log` | global | `/daily-log` | Sweep all lab repos with the `daily-log-commit` workflow (commit + push pending work), then post entries to your own daily-log issue from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. Uses this repo's Python tool (`$DAILY_LOG_HOME`). |
+| `daily-log` | global | `/daily-log` | Sweep all lab repos with the `daily-log-commit` workflow (commit + push pending work), then post entries to your own daily-log issue from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. Uses this repo's Python tool (`$DAILY_LOG_HOME`). Keeps a member-written day comment verbatim, previews every write, and on request gives the LINE "Daily Progress" report first. |
 | `daily-log-audit` | global | `/daily-log-audit` | Full-history audit: recheck every day against the current SOP format, rewrite non-conforming entries, fill missing days (supersedes `verify-daily-log`; pass `--since <date>` for the old quick gap-check scope). Token-efficient. |
 
 ## Layout

@@ -23,7 +23,7 @@ This repo (`bmw-ece-ntust/daily-log`, formerly `auto-daily-log`) is also the **h
 |---|---|---|
 | `daily-plan` | `/daily-plan` | Post the morning plan for today to `progress-plan#366`: a checklist of measurable targets, time ticks optional (none / `hh:mm` deadline / `hh:mm - hh:mm` duration). The evening `/daily-log` fills the same comment in place. |
 | `daily-log-commit` | `/daily-log-commit` (auto on a real `git push`) | Reconcile the 4 project files, commit in SOP `work duration:` format, push, write an LTM session record. Lab orgs only. |
-| `daily-log` | `/daily-log` | Commit + push all lab repos with pending work (`daily-log-commit` sweep), then post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. |
+| `daily-log` | `/daily-log` | Commit + push all lab repos with pending work (`daily-log-commit` sweep), then post entries to `progress-plan#366` from LTM worklogs + commits (cross-verified) — updating the day's existing plan/log comment in place, creating one only if none exists. Keeps a member-written day comment verbatim, previews every write, and on request gives the LINE "Daily Progress" report first. |
 | `daily-log-audit` | `/daily-log-audit` | Full-history audit vs the current SOP format: rewrite non-conforming entries in place and fill missing days (supersedes `verify-daily-log`; `--since <date>` = old quick gap-check). |
 
 ---
