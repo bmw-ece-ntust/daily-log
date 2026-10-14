@@ -1,6 +1,6 @@
 ---
 name: daily-plan
-description: Post the morning daily-plan to the BMW Lab progress issue — the user says in plain words what they want to do today, and this turns it into a checklist of measurable targets (no durations yet; the evening /daily-log fills them in). Trigger: /daily-plan, "plan my day", "today I want to ...".
+description: Post the morning daily-plan to the BMW Lab progress issue — the user says in plain words what they want to do today, and this turns it into a checklist of measurable targets (no durations yet; the evening /daily-log fills them in). After posting, gives a LINE "Daily Plan" draft for the lab group. Trigger: /daily-plan, "plan my day", "today I want to ...".
 ---
 
 ## Model — Sonnet 5 for the writing (mandatory)
@@ -120,6 +120,59 @@ Show the composed plan as a draft. Only after the user confirms:
 ```bash
 gh issue comment <issue> -R <owner>/<repo> --body-file <draft>
 ```
+
+**Concise and precise (the member's rule, 10/08).** Each item is one line:
+`` `hh.mm - hh.mm` : <outcome in the paper, ≤ 12 words> ([mm/dd Prof. <Name>](<minutes link>)) ``.
+- **Outcome.** Name the section and what it will say or show. Leave out the reasoning:
+  the minutes behind the link carry it.
+- **Reference.** A short one, for the meeting the target comes from:
+  `([10/06 Prof. Gu](…))`, or `([10/07 minutes](…))` when no professor is named.
+- **Times.** Split a slot around lunch instead of covering it
+  (`` `11.00 - 11.30`, `12.30 - 13.30` ``).
+- **Example.** Too long:
+  `Sec. I-A3 Dynamic RA-RU Allocation and Transient Analysis finished: why reservation
+  makes R_i vary, and why only a transient model captures it`. Right:
+  `Sec. I-A3 dynamic RA-RU allocation finished ([10/06 Prof. Gu](…))`.
+- **LINE summary lines** follow the same rule, with the reference in brackets and no
+  link: `Sec. 1.1: finish the dynamic RA-RU part (10/06 Prof. Gu)`.
+
+## Step 4 — LINE draft for the lab group (always)
+
+After the plan is posted, give the member the LINE message for it, without being asked:
+
+```
+yyyy/mm/dd: Daily Plan
+
+<html_url of the day's #366 comment>
+
+Summary:
+1. <the day's first target, as paper text>
+2. <next target>
+```
+
+- **Summary.** One line per main target, 1 to 4 lines, in priority order. Name the
+  minutes that asked for a target when that is why it comes first ("from the 10/06
+  meeting with Prof. Gu").
+- **Today's targets, not yesterday's meeting summary.** The 10/07 Daily Plan repeated
+  the 10/06 meeting summary word for word, so the group could not see what the day was
+  for.
+
+**The rules every LINE draft follows**, taken from the member's own messages in the lab
+group (10/02 to 10/07):
+- **Header.** The first line is `yyyy/mm/dd: <Kind>`, where the kind is `Daily Plan`,
+  `Daily Progress` or `Meeting with Prof. <Name>`.
+- **Link.** Then a blank line and the GitHub comment the message is about: the day's #366
+  comment for a plan or progress, the #489 minutes comment for a meeting.
+- **Summary.** Then `Summary:` and 1 to 4 numbered lines.
+- **Results.** Only a Daily Progress adds `Results:` with the Overleaf link.
+- **Paper text, not activity.** Each line names paper text: the section, paragraph or
+  table, in the member's own numbering (`Sec. 1.1 Related Work`, `Sec. 1.2
+  Contributions`). Prof. Ray told the group on 10/02: *"Read paper is NOT your goal.
+  Stick your goal on the paper."* So "Read X" is never a summary line. What reading
+  produced, such as a row of the comparison table or a sentence of Section I, is.
+- **Draft only.** Give one fenced block, ready to paste, and never send it. The member
+  posts it. A mention such as `@Pengwenlong Gu` cannot be made from the text; tell the
+  member to tag the professor in LINE.
 
 ## Hand-off to the evening log
 

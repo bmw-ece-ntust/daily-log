@@ -1,6 +1,6 @@
 ---
 name: daily-log
-description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (the member's own, PREFS_DAILYLOG_ISSUE) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Keeps a member-written day comment verbatim and appends a Daily-Log section; every bullet names an outcome and links its line range at the 7-digit hash; previews the diff and checks updated_at before each write. On request, produces the LINE "Daily Progress" report first, before any plan or minutes change. Trigger: /daily-log
+description: Post BMW Lab daily-log entries to the GitHub Projects progress issue (the member's own, PREFS_DAILYLOG_ISSUE) using the bmw-ece-ntust/daily-log tool. First runs the daily-log-commit (git push) workflow for every lab-related local repo with pending changes, then posts. Seeds entries from long-term memory session records and commit history, restricted to orgs bmw-ece-ntust, bmw-ntust-internship, and raycg. Updates the existing daily-plan/daily-log comment for the day in place; creates a new day comment only when none exists. Catches up missing weekdays, logs today, records sick leave/holiday, reorders comments, generates a missing-days reminder, and attaches documentation evidence links. Keeps a member-written day comment verbatim and appends a Daily-Log section; every bullet names an outcome and links its line range at the 7-digit hash; previews the diff and checks updated_at before each write. Always ends with a LINE "Daily Progress" draft for the lab group, produced before any plan or minutes change. Trigger: /daily-log
 ---
 
 # /daily-log
@@ -248,6 +248,21 @@ Build each day's detail from two sources of truth, then attach evidence.
    the committed file (`grep -n` the `\subsection` / `\end{...}` bounds), not from the diff.
    The same rule applies to the pending items and the report summary.
 
+   **Concise and precise (the member's rule, 10/08).** Each item is one line:
+   `` `hh.mm - hh.mm` : <outcome in the paper, ≤ 12 words> ([mm/dd Prof. <Name>](<minutes link>)) ``.
+   - **Outcome.** Name the section and what it will say or show. Leave out the reasoning:
+     the minutes behind the link carry it.
+   - **Reference.** A short one, for the meeting the target comes from:
+     `([10/06 Prof. Gu](…))`, or `([10/07 minutes](…))` when no professor is named.
+   - **Times.** Split a slot around lunch instead of covering it
+     (`` `11.00 - 11.30`, `12.30 - 13.30` ``).
+   - **Example.** Too long:
+     `Sec. I-A3 Dynamic RA-RU Allocation and Transient Analysis finished: why reservation
+     makes R_i vary, and why only a transient model captures it`. Right:
+     `Sec. I-A3 dynamic RA-RU allocation finished ([10/06 Prof. Gu](…))`.
+   - **LINE summary lines** follow the same rule, with the reference in brackets and no
+     link: `Sec. 1.1: finish the dynamic RA-RU part (10/06 Prof. Gu)`.
+
    **Match the format of the latest comment on the issue.** Before you compose, read the
    member's most recent day comment and copy its section names and bullet shape. The
    template above is only a fallback. Ian's issue (#366) uses
@@ -349,11 +364,41 @@ the Thesis Discussion minutes and execution plan (#489), and in the member's own
 of the weekly meeting minutes (#479), belong to `/action-sync`. Run it after the daily-log
 and the report, and preview each of its changes the same way.
 
+**Every push ends in `/action-sync`.** This includes a push this skill makes, and a push
+the member asked for by choosing "Commit + push" in a question. The `git push` hook
+covers only the typed words. `/action-sync` owns the `**Pending Action Items**` section
+at the end of the day's comment, which is the member's daily list of open minutes items.
+When editing the comment, keep that section verbatim; the next sync rebuilds it.
+
 ## Step 5 — Daily report for the lab chat
 
-When the member asks for "the report", or shares last time's LINE message, produce it
-**first**: before any change to the plan, minutes or weekly comment. Commit, push and
-the daily-log post come before it only so that its links resolve.
+**Every daily-log run ends with a LINE draft**, without being asked. The member reports
+to the lab LINE group after each daily plan, daily log and meeting. `/daily-plan` and
+`/meeting-minutes` write the other two kinds. Produce it **first**: before any change to
+the plan, minutes or weekly comment. Commit, push and the daily-log post come before it
+only so that its links resolve.
+
+The Daily Progress is due by **15.00**, two hours before the evening meeting (09/29
+minutes). On 10/06 it was posted at 16.48 and on 10/07 at 17.33. When the draft is
+ready after 15.00, say so.
+
+**The rules every LINE draft follows**, taken from the member's own messages in the lab
+group (10/02 to 10/07):
+- **Header.** The first line is `yyyy/mm/dd: <Kind>`, where the kind is `Daily Plan`,
+  `Daily Progress` or `Meeting with Prof. <Name>`.
+- **Link.** Then a blank line and the GitHub comment the message is about: the day's #366
+  comment for a plan or progress, the #489 minutes comment for a meeting.
+- **Summary.** Then `Summary:` and 1 to 4 numbered lines.
+- **Results.** Only a Daily Progress adds `Results:` with the Overleaf link.
+- **Paper text, not activity.** Each line names paper text: the section, paragraph or
+  table, in the member's own numbering (`Sec. 1.1 Related Work`, `Sec. 1.2
+  Contributions`). Prof. Ray told the group on 10/02: *"Read paper is NOT your goal.
+  Stick your goal on the paper."* So "Read X" is never a summary line. What reading
+  produced, such as a row of the comparison table or a sentence of Section I, is.
+- **Draft only.** Give one fenced block, ready to paste, and never send it. The member
+  posts it. A mention such as `@Pengwenlong Gu` cannot be made from the text; tell the
+  member to tag the professor in LINE.
+
 
 The format is fixed. Copy last time's message if the member pasted it.
 
