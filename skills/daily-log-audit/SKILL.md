@@ -109,6 +109,11 @@ bodies; a small scratch script, not per-day LLM calls):
 6. Bullet times fall inside an LTM worklog interval for that repo-day (±15 min
    tolerance); unknown starts written `??:?? - HH.MM`, never invented.
 7. Only lab-org `[owner/repo]` tags.
+8. **No copied day.** Compare each day with all earlier days, with times and dates removed.
+   A day whose lines all appear in earlier entries, or whose only lab links repeat earlier
+   links, is `REWRITE`: fill it from that day's own commits, or mark the targets
+   `- [ ] — pending` if no work exists. The monthly KPI scores a copied day 0
+   (`lab-review/scripts/monthly_kpi.py`, `fresh_days`).
 
 Emit the triage as a compact table: `date | status | reasons`. **Only `REWRITE`
 and `MISSING` days move to step 3.**

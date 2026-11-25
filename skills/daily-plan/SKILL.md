@@ -153,6 +153,10 @@ Summary:
 - **Summary.** One line per main target, 1 to 4 lines, in priority order. Name the
   minutes that asked for a target when that is why it comes first ("from the 10/06
   meeting with Prof. Gu").
+- **Today's step, not yesterday's list.** A carried-over target stays `- [ ]`, but name
+  today's next step of it. Never paste the previous day's plan unchanged: the evening log
+  must add a new result line at that day's commit hash (SOP `daily-log.md`, "Each day
+  records its own progress").
 - **Today's targets, not yesterday's meeting summary.** The 10/07 Daily Plan repeated
   the 10/06 meeting summary word for word, so the group could not see what the day was
   for.

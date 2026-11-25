@@ -230,6 +230,12 @@ Build each day's detail from two sources of truth, then attach evidence.
      bullet naming the target, linked to the primary study-notes doc. Two genuinely
      distinct targets in one interval = two bullets sharing the time range, not
      sub-bullets.
+   - **Never copy an earlier day.** Before you post, compare the draft with the member's
+     earlier entries. Each day has at least one new `- [x]` result line, linked at that
+     day's own commit hash. A line with the same words and the same link as an earlier
+     day does not count (SOP `daily-log.md`, "Each day records its own progress"; the
+     monthly KPI scores such a day 0). Never reuse an earlier day's link for a new
+     result; a day with no new result keeps only its `- [ ] — pending: <reason>` lines.
    - **Distil, don't copy** commit messages: drop file lists, parentheticals,
      flag/tool names, and markers like `(parallel)` / `(N commits)` — overlapping time
      ranges already show concurrency.
