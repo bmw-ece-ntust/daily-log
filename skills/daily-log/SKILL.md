@@ -236,6 +236,10 @@ Build each day's detail from two sources of truth, then attach evidence.
      day does not count (SOP `daily-log.md`, "Each day records its own progress"; the
      monthly KPI scores such a day 0). Never reuse an earlier day's link for a new
      result; a day with no new result keeps only its `- [ ] — pending: <reason>` lines.
+   - **Link only the member's own work.** Each evidence link opens a commit the member
+     authored or co-authored (`Co-authored-by`), or a comment or PR they wrote. Never
+     log another member's commit as the member's progress; link the member's own part,
+     or leave it out. Meeting minutes in `progress-plan` are the one shared exception.
    - **Distil, don't copy** commit messages: drop file lists, parentheticals,
      flag/tool names, and markers like `(parallel)` / `(N commits)` — overlapping time
      ranges already show concurrency.
